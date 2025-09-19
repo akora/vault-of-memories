@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.specify/scripts/bash/create-new-feature.sh:*)",
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
