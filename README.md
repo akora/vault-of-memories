@@ -57,7 +57,7 @@ Once in your AI agent with spec-kit loaded:
 
 ### Project Setup Complete
 
-- **[Project Constitution](./memory/constitution.md)** - Core principles and development standards
+- **[Project Constitution](./.specify/memory/constitution.md)** - Core principles and development standards
 - **[Spec-Kit Workflow Guide](./SPEC-KIT-WORKFLOW.md)** - Modular specification process
 - **[Technical Architecture](./README-detailed.md)** - Complete system design and rule storage
 
@@ -141,7 +141,7 @@ The system follows a modular pipeline architecture:
 
 ## 📚 Documentation
 
-- [Project Constitution](./memory/constitution.md) - Core principles and standards
+- [Project Constitution](./.specify/memory/constitution.md) - Core principles and standards
 - [Spec-Kit Workflow Guide](./SPEC-KIT-WORKFLOW.md) - Step-by-step modular specification process
 - [Feature Specifications](./specs/) - Detailed feature requirements (modular components)
 - [Complete Technical Documentation](./README-detailed.md) - Full system architecture, rule storage, and implementation details
@@ -150,7 +150,7 @@ The system follows a modular pipeline architecture:
 
 This project follows Spec-Driven Development principles:
 
-1. **Establish Principles**: Review the [constitution](./memory/constitution.md)
+1. **Establish Principles**: Review the [constitution](./.specify/memory/constitution.md)
 2. **Create Specifications**: Use `/specify` for new features
 3. **Plan Implementation**: Use `/plan` for technical approach
 4. **Break Down Tasks**: Use `/tasks` for actionable items
