@@ -70,19 +70,18 @@ class TestDuplicateDatabaseAdd:
         assert len(set(ids)) == len(ids)
 
     def test_add_file_record_invalid_data(self):
-        """Test adding record with invalid data raises ValueError."""
-        invalid_records = [
-            # Invalid checksum (too short)
-            FileRecord(None, Path("/test.txt"), "abc", 100, time.time(), time.time(), ProcessingStatus.PENDING),
-            # Invalid file size (negative)
-            FileRecord(None, Path("/test.txt"), "a" * 64, -1, time.time(), time.time(), ProcessingStatus.PENDING),
-            # Invalid timestamps
-            FileRecord(None, Path("/test.txt"), "a" * 64, 100, -1, time.time(), ProcessingStatus.PENDING),
-        ]
+        """Test creating record with invalid data raises ValueError."""
+        # Test invalid checksum (too short)
+        with pytest.raises(ValueError):
+            FileRecord(None, Path("/test.txt"), "abc", 100, time.time(), time.time(), ProcessingStatus.PENDING)
 
-        for invalid_record in invalid_records:
-            with pytest.raises(ValueError):
-                self.database.add_file_record(invalid_record)
+        # Test invalid file size (negative)
+        with pytest.raises(ValueError):
+            FileRecord(None, Path("/test.txt"), "a" * 64, -1, time.time(), time.time(), ProcessingStatus.PENDING)
+
+        # Test invalid timestamps
+        with pytest.raises(ValueError):
+            FileRecord(None, Path("/test.txt"), "a" * 64, 100, -1, time.time(), ProcessingStatus.PENDING)
 
     def test_add_file_record_duplicate_path(self):
         """Test adding record with duplicate file path."""

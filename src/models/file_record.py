@@ -52,7 +52,10 @@ class FileRecord:
             raise ValueError("Checksum must be a string")
 
         if len(self.checksum) != 64:
-            raise ValueError(f"SHA-256 checksum must be 64 characters, got {len(self.checksum)}")
+            raise ValueError(
+                f"SHA-256 checksum must be 64 characters, "
+                f"got {len(self.checksum)}"
+            )
 
         try:
             int(self.checksum, 16)
@@ -66,11 +69,15 @@ class FileRecord:
 
     def _validate_timestamps(self):
         """Validate timestamps are reasonable."""
-        if not isinstance(self.modification_time, (int, float)) or self.modification_time < 0:
+        if (not isinstance(self.modification_time, (int, float)) or
+                self.modification_time < 0):
             raise ValueError("Modification time must be a non-negative number")
 
-        if not isinstance(self.created_at, (int, float)) or self.created_at < 0:
-            raise ValueError("Created at timestamp must be a non-negative number")
+        if (not isinstance(self.created_at, (int, float)) or
+                self.created_at < 0):
+            raise ValueError(
+                "Created at timestamp must be a non-negative number"
+            )
 
     def _validate_file_path(self):
         """Validate file path is absolute."""

@@ -4,7 +4,6 @@ Handles file ingestion operations with duplicate detection and system file filte
 """
 
 import hashlib
-import os
 import time
 from pathlib import Path
 from typing import List
@@ -63,7 +62,10 @@ class FileIngestorImpl:
             checksum = self._calculate_checksum(file_path)
 
             # Check for duplicates
-            status = ProcessingStatus.DUPLICATE if self.is_duplicate(checksum) else ProcessingStatus.PROCESSED
+            if self.is_duplicate(checksum):
+                status = ProcessingStatus.DUPLICATE
+            else:
+                status = ProcessingStatus.PROCESSED
 
             # Create file record
             record = FileRecord(
@@ -84,7 +86,8 @@ class FileIngestorImpl:
                 (file_path, checksum, file_size, modification_time, created_at, status)
                 VALUES (?, ?, ?, ?, ?, ?)
             """, (
-                str(file_path), checksum, file_size, modification_time, created_at, status.value
+                str(file_path), checksum, file_size,
+                modification_time, created_at, status.value
             ))
             record.id = cursor.lastrowid
             conn.commit()
@@ -100,11 +103,12 @@ class FileIngestorImpl:
         except PermissionError:
             self.stats.add_error_file()
             raise
-        except Exception as e:
+        except Exception:
             self.stats.add_error_file()
             raise
 
-    def ingest_directory(self, dir_path: Path, recursive: bool = True) -> List[FileRecord]:
+    def ingest_directory(self, dir_path: Path,
+                         recursive: bool = True) -> List[FileRecord]:
         """
         Ingest all files in a directory.
 
@@ -144,7 +148,7 @@ class FileIngestorImpl:
                     record = self.ingest_file(file_path)
                     records.append(record)
 
-                except (PermissionError, ValueError) as e:
+                except (PermissionError, ValueError):
                     # Log error but continue processing other files
                     continue
 
@@ -180,7 +184,10 @@ class FileIngestorImpl:
 
         conn = self.db_manager.get_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT id FROM file_records WHERE LOWER(checksum) = ?", (checksum_lower,))
+        cursor.execute(
+            "SELECT id FROM file_records WHERE LOWER(checksum) = ?",
+            (checksum_lower,)
+        )
         return cursor.fetchone() is not None
 
     def get_processing_stats(self) -> ProcessingStats:

@@ -115,7 +115,7 @@ class TestDuplicateDatabaseFind:
 
     def test_find_by_checksum_multiple_same_checksum(self):
         """Test finding when multiple records have same checksum (should not happen but test boundary)."""
-        checksum = "duplicate" + "0" * 56
+        checksum = "deadbeef" + "0" * 56
 
         # This test documents expected behavior if duplicates somehow exist
         # Implementation should prevent this through constraints

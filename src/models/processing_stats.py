@@ -52,7 +52,8 @@ class ProcessingStats:
         if not isinstance(self.total_size, int) or self.total_size < 0:
             raise ValueError("Total size must be a non-negative integer")
 
-        if not isinstance(self.processing_time, (int, float)) or self.processing_time < 0:
+        if (not isinstance(self.processing_time, (int, float)) or
+                self.processing_time < 0):
             raise ValueError("Processing time must be a non-negative number")
 
     def add_processed_file(self, file_size: int):
@@ -140,7 +141,8 @@ class ProcessingStats:
             error_files=self.error_files + other.error_files,
             system_files_removed=self.system_files_removed + other.system_files_removed,
             total_size=self.total_size + other.total_size,
-            processing_time=max(self.processing_time, other.processing_time)  # Use max for concurrent operations
+            # Use max for concurrent operations
+            processing_time=max(self.processing_time, other.processing_time)
         )
 
     def __str__(self) -> str:

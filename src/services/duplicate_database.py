@@ -105,7 +105,8 @@ class DuplicateDatabaseImpl:
 
         # Case-insensitive search, return the first match
         cursor.execute("""
-            SELECT id, file_path, checksum, file_size, modification_time, created_at, status
+            SELECT id, file_path, checksum, file_size, modification_time,
+                   created_at, status
             FROM file_records
             WHERE LOWER(checksum) = LOWER(?)
             ORDER BY created_at
@@ -150,7 +151,8 @@ class DuplicateDatabaseImpl:
 
         for checksum in duplicate_checksums:
             cursor.execute("""
-                SELECT id, file_path, checksum, file_size, modification_time, created_at, status
+                SELECT id, file_path, checksum, file_size, modification_time,
+                       created_at, status
                 FROM file_records
                 WHERE checksum = ?
                 ORDER BY created_at
@@ -249,7 +251,8 @@ class DuplicateDatabaseImpl:
             raise ValueError("File size must be a non-negative integer")
 
         # Validate timestamps
-        if not isinstance(record.modification_time, (int, float)) or record.modification_time < 0:
+        if (not isinstance(record.modification_time, (int, float)) or
+                record.modification_time < 0):
             raise ValueError("Modification time must be a non-negative number")
 
         if not isinstance(record.created_at, (int, float)) or record.created_at < 0:
