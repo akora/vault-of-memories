@@ -29,6 +29,7 @@ MANIFEST
 .pytest_cache/
 .coverage
 htmlcov/
+.tox/
 
 # Virtual environments
 .env
@@ -54,3 +55,17 @@ venv.bak/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+temp/
+tmp/
