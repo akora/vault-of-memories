@@ -38,7 +38,7 @@
 - Paths shown below assume single project structure from plan.md
 
 ## Phase 7.1: Setup
-- [ ] T001 Add pymediainfo dependency to requirements.txt
+- [x] T001 Add pymediainfo dependency to requirements.txt
 
 ## Phase 7.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 7.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
@@ -57,18 +57,18 @@
 - [ ] T014 [P] Integration test for multi-stream videos in tests/integration/test_video_multi_stream.py
 
 ## Phase 7.3: Core Implementation (ONLY after tests are failing)
-- [ ] T015 [P] Create VideoMetadata data model in src/models/video_metadata.py
-- [ ] T016 [P] Create CategoryResult data model in src/models/video_metadata.py
-- [ ] T017 Implement media info extractor using pymediainfo in src/services/media_info_extractor.py
-- [ ] T018 Implement resolution detector in src/services/resolution_detector.py
-- [ ] T019 Implement content categorizer in src/services/content_categorizer.py
-- [ ] T020 Implement VideoProcessor interface in src/services/video_processor.py
+- [x] T015 [P] Create VideoMetadata data model in src/models/video_metadata.py
+- [x] T016 [P] Create CategoryResult data model in src/models/video_metadata.py
+- [x] T017 Implement media info extractor using pymediainfo in src/services/media_info_extractor.py
+- [x] T018 Implement resolution detector in src/services/resolution_detector.py
+- [x] T019 Implement content categorizer in src/services/content_categorizer.py
+- [x] T020 Implement VideoProcessor interface in src/services/video_processor.py
 
 ## Phase 7.4: Integration
 - [ ] T021 Register VideoProcessor with ProcessorRouter in src/services/processor_router.py
-- [ ] T022 Add video format configuration to config/video_processing.json
-- [ ] T023 Add comprehensive logging to video processing services
-- [ ] T024 Integrate with configuration system for categorization rules
+- [x] T022 Add video format configuration to config/video_processing.json
+- [x] T023 Add comprehensive logging to video processing services
+- [x] T024 Integrate with configuration system for categorization rules
 
 ## Phase 7.5: Polish
 - [ ] T025 [P] Unit tests for media info extraction in tests/unit/test_media_info_extractor.py
