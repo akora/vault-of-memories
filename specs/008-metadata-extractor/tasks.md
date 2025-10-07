@@ -38,7 +38,7 @@
 - Paths shown below assume single project structure from plan.md
 
 ## Phase 8.1: Setup
-- [ ] T001 No new dependencies needed (uses Python standard library only)
+- [x] T001 No new dependencies needed (uses Python standard library only)
 
 ## Phase 8.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 8.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
@@ -56,22 +56,22 @@
 - [ ] T013 [P] Integration test for quality scoring in tests/integration/test_quality_assessment.py
 
 ## Phase 8.3: Core Implementation (ONLY after tests are failing)
-- [ ] T014 [P] Create MetadataSource enum in src/models/consolidated_metadata.py
-- [ ] T015 [P] Create MetadataField data model in src/models/consolidated_metadata.py
-- [ ] T016 Create ConsolidatedMetadata data model in src/models/consolidated_metadata.py
-- [ ] T017 [P] Create MetadataQuality data model in src/models/consolidated_metadata.py
-- [ ] T018 Implement PriorityResolver with configurable rules in src/services/priority_resolver.py
-- [ ] T019 Implement TimezonePreserver for timezone preservation in src/services/timezone_preserver.py
-- [ ] T020 Implement ManufacturerStandardizer with mappings in src/services/manufacturer_standardizer.py
-- [ ] T021 Implement MetadataQualityAssessor for quality scoring in src/services/metadata_quality_assessor.py
-- [ ] T022 Implement MetadataConsolidator main orchestration in src/services/metadata_consolidator.py
+- [x] T014 [P] Create MetadataSource enum in src/models/consolidated_metadata.py
+- [x] T015 [P] Create MetadataField data model in src/models/consolidated_metadata.py
+- [x] T016 Create ConsolidatedMetadata data model in src/models/consolidated_metadata.py
+- [x] T017 [P] Create MetadataQuality data model in src/models/consolidated_metadata.py
+- [x] T018 Implement PriorityResolver with configurable rules in src/services/priority_resolver.py
+- [x] T019 Implement TimezonePreserver for timezone preservation in src/services/timezone_preserver.py
+- [x] T020 Implement ManufacturerStandardizer with mappings in src/services/manufacturer_standardizer.py
+- [x] T021 Implement MetadataQualityAssessor for quality scoring in src/services/metadata_quality_assessor.py
+- [x] T022 Implement MetadataConsolidator main orchestration in src/services/metadata_consolidator.py
 
 ## Phase 8.4: Integration
-- [ ] T023 Create priority rules configuration in config/metadata_priorities.json
-- [ ] T024 Create manufacturer mappings configuration in config/manufacturer_mappings.json
-- [ ] T025 Add comprehensive logging to metadata consolidation services
-- [ ] T026 Integrate with existing image, document, audio, video processors
-- [ ] T027 Add processor registry and coordination logic
+- [x] T023 Create priority rules configuration in config/metadata_priorities.json
+- [x] T024 Create manufacturer mappings configuration in config/manufacturer_mappings.json
+- [x] T025 Add comprehensive logging to metadata consolidation services
+- [x] T026 Integrate with existing image, document, audio, video processors
+- [x] T027 Add processor registry and coordination logic
 
 ## Phase 8.5: Polish
 - [ ] T028 [P] Unit tests for priority resolution in tests/unit/test_priority_resolver.py
