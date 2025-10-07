@@ -1,0 +1,155 @@
+{
+  "description": "Length limiting and truncation strategy for filename generation",
+  "version": "1.0.0",
+  "max_length": {
+    "filename": 255,
+    "description": "Maximum filename length in characters (common filesystem limit)",
+    "notes": [
+      "NTFS, ext4, APFS all support 255 bytes for filenames",
+      "We use 255 characters as a safe limit",
+      "Extension and collision counter must fit within this limit"
+    ]
+  },
+  "component_priorities": {
+    "description": "Component priority for truncation (lower priority components truncated/dropped first)",
+    "preserve": {
+      "priority": 1,
+      "description": "Components that should never be truncated or dropped",
+      "components": [
+        "date",
+        "extension",
+        "counter"
+      ],
+      "reason": "Essential for uniqueness and file identification"
+    },
+    "droppable": {
+      "priority": 2,
+      "description": "Components that can be dropped entirely if needed",
+      "components": [
+        "category",
+        "secondary_category",
+        "author",
+        "description"
+      ],
+      "reason": "Nice to have but not essential for file identification"
+    },
+    "truncatable": {
+      "priority": 3,
+      "description": "Components that can be truncated to shorter forms",
+      "components": [
+        "device_model",
+        "title",
+        "artist",
+        "device_make"
+      ],
+      "reason": "Important but can be shortened while maintaining meaning",
+      "max_truncated_length": {
+        "device_model": 15,
+        "title": 30,
+        "artist": 20,
+        "device_make": 10
+      }
+    },
+    "fixed": {
+      "priority": 4,
+      "description": "Components with fixed or predictable lengths",
+      "components": [
+        "time",
+        "resolution",
+        "size_kb",
+        "size_mb",
+        "bitrate",
+        "page_count",
+        "checksum_short"
+      ],
+      "reason": "Already short and standardized format"
+    }
+  },
+  "truncation_strategy": {
+    "description": "How to truncate filenames when they exceed max_length",
+    "steps": [
+      {
+        "step": 1,
+        "action": "Drop lowest priority components",
+        "description": "Remove droppable components (category, author, etc.)"
+      },
+      {
+        "step": 2,
+        "action": "Truncate medium priority components",
+        "description": "Shorten truncatable components to max lengths"
+      },
+      {
+        "step": 3,
+        "action": "Truncate middle of base filename",
+        "description": "If still too long, truncate middle with '...'"
+      }
+    ],
+    "middle_truncation": {
+      "description": "Strategy for truncating middle of filename",
+      "keep_start_ratio": 0.67,
+      "keep_end_ratio": 0.33,
+      "ellipsis": "...",
+      "example": "very-long-filename-with-many-components → very-long-filen...omponents",
+      "notes": [
+        "Preserves more of the start (typically date and key identifiers)",
+        "Preserves some of the end (typically size and format info)",
+        "Replaces middle with ellipsis"
+      ]
+    }
+  },
+  "reserved_space": {
+    "description": "Space to reserve for components that may be added later",
+    "collision_counter": {
+      "max_length": 9,
+      "format": "-NNNNNNNN",
+      "example": "-00000001",
+      "notes": "8-digit zero-padded counter plus hyphen separator"
+    },
+    "extension": {
+      "typical_length": 4,
+      "max_length": 10,
+      "example": ".jpg, .mp4, .docx, .tar.gz",
+      "notes": "Most extensions are 3-5 characters including dot"
+    }
+  },
+  "safe_length_calculation": {
+    "description": "How to calculate safe filename length to avoid truncation",
+    "formula": "max_length - extension_length - counter_overhead",
+    "counter_overhead": 9,
+    "example": "255 - 4 (.jpg) - 9 (counter) = 242 characters safe for base name"
+  },
+  "examples": {
+    "truncation_examples": [
+      {
+        "scenario": "Filename slightly over limit",
+        "original": "20240315-143022-Canon-EOS-5D-Mark-IV-Super-Zoom-Lens-Special-Edition-family-vacation-beach-photos-ir4000x3000-s2048.jpg",
+        "original_length": 138,
+        "action": "Drop category components",
+        "result": "20240315-143022-Canon-EOS-5D-Mark-IV-Super-Zoom-Lens-ir4000x3000-s2048.jpg",
+        "result_length": 86
+      },
+      {
+        "scenario": "Filename way over limit",
+        "original": "20240315-143022-Very-Long-Device-Name-With-Multiple-Words-That-Exceeds-Normal-Length-Expectations-And-Contains-Lots-Of-Detail-About-The-Camera-Model-And-Specifications-ir4000x3000-s2048.jpg",
+        "original_length": 195,
+        "action": "Truncate middle",
+        "result": "20240315-143022-Very-Long-Device-Name-With-Multiple-Words-That...tions-ir4000x3000-s2048.jpg",
+        "result_length": 90
+      },
+      {
+        "scenario": "Document with long title",
+        "original": "20240315-comprehensive-quarterly-financial-report-with-detailed-analysis-and-executive-summary-p24-s512.pdf",
+        "original_length": 111,
+        "action": "Truncate title",
+        "result": "20240315-comprehensive-quarterly-fin...sis-and-executive-summary-p24-s512.pdf",
+        "result_length": 76
+      }
+    ]
+  },
+  "validation": {
+    "minimum_base_length": 10,
+    "description": "Minimum characters required for base filename (excluding extension)",
+    "reason": "Ensure filename is meaningful even after truncation",
+    "error_if_below": true
+  }
+}
