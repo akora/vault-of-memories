@@ -61,10 +61,10 @@
 - [x] T016 Implement AudioProcessor interface in src/services/audio_processor.py
 
 ## Phase 6.4: Integration
-- [ ] T017 Register AudioProcessor with ProcessorRouter in src/services/processor_router.py
-- [ ] T018 Add audio format configuration to config/processing_rules.json
-- [ ] T019 Add comprehensive logging to audio processing services
-- [ ] T020 Integrate with configuration system for quality thresholds
+- [x] T017 Register AudioProcessor with ProcessorRouter in src/services/processor_router.py
+- [x] T018 Add audio format configuration to config/audio_processing.json
+- [x] T019 Add comprehensive logging to audio processing services
+- [x] T020 Integrate with configuration system for quality thresholds
 
 ## Phase 6.5: Polish
 - [ ] T021 [P] Unit tests for tag extraction in tests/unit/test_tag_extractor.py
