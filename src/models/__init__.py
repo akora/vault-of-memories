@@ -9,6 +9,7 @@ from .consolidated_metadata import (
     ConsolidatedMetadata,
     MetadataQuality
 )
+from .generated_filename import GeneratedFilename
 
 __all__ = [
     "VideoMetadata",
@@ -17,4 +18,5 @@ __all__ = [
     "MetadataField",
     "ConsolidatedMetadata",
     "MetadataQuality",
+    "GeneratedFilename",
 ]

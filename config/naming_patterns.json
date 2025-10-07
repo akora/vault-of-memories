@@ -1,0 +1,195 @@
+{
+  "description": "Naming pattern templates for standardized filename generation",
+  "version": "1.0.0",
+  "patterns": {
+    "image": {
+      "default": "{date}-{time}-{device_make}-{device_model}-ir{resolution}-s{size_kb}",
+      "description": "Pattern for image files (photos, screenshots, graphics)",
+      "components": [
+        "date",
+        "time",
+        "device_make",
+        "device_model",
+        "resolution",
+        "size_kb"
+      ],
+      "example": "20240315-143022-Canon-EOS-5D-Mark-IV-ir4000x3000-s2048.jpg"
+    },
+    "document": {
+      "default": "{date}-{title}-p{page_count}-s{size_kb}",
+      "description": "Pattern for document files (PDF, Word, Excel, PowerPoint)",
+      "components": [
+        "date",
+        "title",
+        "page_count",
+        "size_kb"
+      ],
+      "example": "20240315-quarterly-report-p24-s512.pdf"
+    },
+    "audio": {
+      "default": "{date}-{artist}-{title}-br{bitrate}",
+      "description": "Pattern for audio files (MP3, FLAC, WAV)",
+      "components": [
+        "date",
+        "artist",
+        "title",
+        "bitrate"
+      ],
+      "example": "20240315-beethoven-symphony-no-5-br320.mp3"
+    },
+    "video": {
+      "default": "{date}-{time}-{resolution_label}-{category}-s{size_mb}",
+      "description": "Pattern for video files (MP4, MOV, AVI, MKV)",
+      "components": [
+        "date",
+        "time",
+        "resolution_label",
+        "category",
+        "size_mb"
+      ],
+      "example": "20240315-143022-1080p-family-s1024.mp4"
+    },
+    "unknown": {
+      "default": "{date}-{checksum_short}-s{size_kb}",
+      "description": "Fallback pattern for unknown or unrecognized file types",
+      "components": [
+        "date",
+        "checksum_short",
+        "size_kb"
+      ],
+      "example": "20240315-a1b2c3d4-s256.bin"
+    }
+  },
+  "component_definitions": {
+    "date": {
+      "format": "YYYYMMDD",
+      "sources": [
+        "creation_date",
+        "capture_date",
+        "modification_date"
+      ],
+      "priority": "high",
+      "example": "20240315"
+    },
+    "time": {
+      "format": "HHMMSS",
+      "sources": [
+        "creation_date",
+        "capture_date"
+      ],
+      "priority": "medium",
+      "example": "143022"
+    },
+    "device_make": {
+      "format": "string",
+      "sources": [
+        "device_make"
+      ],
+      "priority": "medium",
+      "max_length": 20,
+      "example": "Canon"
+    },
+    "device_model": {
+      "format": "string",
+      "sources": [
+        "device_model"
+      ],
+      "priority": "medium",
+      "max_length": 30,
+      "example": "EOS-5D-Mark-IV"
+    },
+    "resolution": {
+      "format": "WIDTHxHEIGHT",
+      "sources": [
+        "width",
+        "height"
+      ],
+      "priority": "low",
+      "example": "4000x3000"
+    },
+    "resolution_label": {
+      "format": "string",
+      "sources": [
+        "resolution_label"
+      ],
+      "priority": "medium",
+      "example": "1080p"
+    },
+    "size_kb": {
+      "format": "integer",
+      "sources": [
+        "file_size"
+      ],
+      "priority": "low",
+      "example": "2048"
+    },
+    "size_mb": {
+      "format": "integer",
+      "sources": [
+        "file_size"
+      ],
+      "priority": "low",
+      "example": "1024"
+    },
+    "title": {
+      "format": "string",
+      "sources": [
+        "title"
+      ],
+      "priority": "high",
+      "max_length": 50,
+      "example": "quarterly-report"
+    },
+    "artist": {
+      "format": "string",
+      "sources": [
+        "artist",
+        "author"
+      ],
+      "priority": "high",
+      "max_length": 30,
+      "example": "beethoven"
+    },
+    "page_count": {
+      "format": "integer",
+      "sources": [
+        "page_count"
+      ],
+      "priority": "low",
+      "example": "24"
+    },
+    "bitrate": {
+      "format": "integer",
+      "sources": [
+        "bitrate"
+      ],
+      "priority": "low",
+      "example": "320"
+    },
+    "category": {
+      "format": "string",
+      "sources": [
+        "category"
+      ],
+      "priority": "medium",
+      "max_length": 20,
+      "example": "family"
+    },
+    "checksum_short": {
+      "format": "string",
+      "sources": [
+        "checksum"
+      ],
+      "priority": "high",
+      "length": 8,
+      "example": "a1b2c3d4"
+    }
+  },
+  "notes": [
+    "All patterns use hyphen (-) as the primary separator",
+    "Missing components are omitted from the final filename",
+    "Components are formatted and sanitized before inclusion",
+    "Collision detection adds -NNNNNNNN suffix (8-digit counter)",
+    "Length limiting truncates middle of filename if exceeds 255 chars"
+  ]
+}

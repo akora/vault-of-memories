@@ -11,6 +11,12 @@ from .priority_resolver import PriorityResolver
 from .timezone_preserver import TimezonePreserver
 from .manufacturer_standardizer import ManufacturerStandardizer
 from .metadata_quality_assessor import MetadataQualityAssessor
+from .filename_generator import FilenameGenerator
+from .naming_pattern_engine import NamingPatternEngine
+from .component_formatter import ComponentFormatter
+from .metadata_sanitizer import MetadataSanitizer
+from .collision_detector import CollisionDetector
+from .length_limiter import LengthLimiter
 
 __all__ = [
     "VideoProcessor",
@@ -23,4 +29,10 @@ __all__ = [
     "TimezonePreserver",
     "ManufacturerStandardizer",
     "MetadataQualityAssessor",
+    "FilenameGenerator",
+    "NamingPatternEngine",
+    "ComponentFormatter",
+    "MetadataSanitizer",
+    "CollisionDetector",
+    "LengthLimiter",
 ]
