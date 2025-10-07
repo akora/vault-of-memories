@@ -38,7 +38,7 @@
 - Paths shown below assume single project structure from plan.md
 
 ## Phase 6.1: Setup
-- [ ] T001 Add mutagen dependency to requirements.txt
+- [x] T001 Add mutagen dependency to requirements.txt
 
 ## Phase 6.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 6.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**

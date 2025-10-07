@@ -1,0 +1,13 @@
+# File Ingestion System Dependencies
+# Following Dependency Minimalism (DM) principle - only essential external deps
+
+# Testing framework
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# Development tools
+black>=23.0.0
+flake8>=6.0.0
+
+# Audio Processing Dependencies (006-audio-processor)
+mutagen>=1.47.0
