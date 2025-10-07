@@ -42,23 +42,23 @@
 
 ## Phase 6.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 6.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
-- [ ] T002 [P] Contract test for AudioProcessor.process_audio with MP3 in tests/contract/test_audio_processor_mp3.py
-- [ ] T003 [P] Contract test for AudioProcessor.process_audio with FLAC in tests/contract/test_audio_processor_flac.py
-- [ ] T004 [P] Contract test for AudioProcessor.process_audio with M4A in tests/contract/test_audio_processor_m4a.py
-- [ ] T005 [P] Contract test for AudioProcessor.process_audio with OGG in tests/contract/test_audio_processor_ogg.py
-- [ ] T006 [P] Contract test for AudioProcessor.process_audio with WMA in tests/contract/test_audio_processor_wma.py
-- [ ] T007 [P] Contract test for AudioProcessor.supports_format in tests/contract/test_audio_processor_supports_format.py
-- [ ] T008 [P] Integration test for MP3 metadata extraction in tests/integration/test_audio_mp3_metadata.py
-- [ ] T009 [P] Integration test for FLAC metadata extraction in tests/integration/test_audio_flac_metadata.py
-- [ ] T010 [P] Integration test for audio quality classification in tests/integration/test_audio_quality_classification.py
-- [ ] T011 [P] Integration test for missing metadata handling in tests/integration/test_audio_missing_metadata.py
-- [ ] T012 [P] Integration test for corrupted audio file handling in tests/integration/test_audio_corrupted_files.py
+- [x] T002 [P] Contract test for AudioProcessor.process_audio with MP3 in tests/contract/test_audio_processor_mp3.py
+- [x] T003 [P] Contract test for AudioProcessor.process_audio with FLAC in tests/contract/test_audio_processor_flac.py
+- [x] T004 [P] Contract test for AudioProcessor.process_audio with M4A in tests/contract/test_audio_processor_m4a.py
+- [x] T005 [P] Contract test for AudioProcessor.process_audio with OGG in tests/contract/test_audio_processor_ogg.py
+- [x] T006 [P] Contract test for AudioProcessor.process_audio with WMA in tests/contract/test_audio_processor_wma.py
+- [x] T007 [P] Contract test for AudioProcessor.supports_format in tests/contract/test_audio_processor_supports_format.py
+- [x] T008 [P] Integration test for MP3 metadata extraction in tests/integration/test_audio_mp3_metadata.py
+- [x] T009 [P] Integration test for FLAC metadata extraction in tests/integration/test_audio_flac_metadata.py
+- [x] T010 [P] Integration test for audio quality classification in tests/integration/test_audio_quality_classification.py
+- [x] T011 [P] Integration test for missing metadata handling in tests/integration/test_audio_missing_metadata.py
+- [x] T012 [P] Integration test for corrupted audio file handling in tests/integration/test_audio_corrupted_files.py
 
 ## Phase 6.3: Core Implementation (ONLY after tests are failing)
-- [ ] T013 [P] Create AudioMetadata data model in src/models/audio_metadata.py
-- [ ] T014 Implement tag extraction service using mutagen in src/services/tag_extractor.py
-- [ ] T015 Implement audio quality classifier in src/services/audio_quality_classifier.py
-- [ ] T016 Implement AudioProcessor interface in src/services/audio_processor.py
+- [x] T013 [P] Create AudioMetadata data model in src/models/audio_metadata.py
+- [x] T014 Implement tag extraction service using mutagen in src/services/tag_extractor.py
+- [x] T015 Implement audio quality classifier in src/services/audio_quality_classifier.py
+- [x] T016 Implement AudioProcessor interface in src/services/audio_processor.py
 
 ## Phase 6.4: Integration
 - [ ] T017 Register AudioProcessor with ProcessorRouter in src/services/processor_router.py
