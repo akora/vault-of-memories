@@ -1,0 +1,165 @@
+{
+  "categorization_rules": {
+    "family": {
+      "camera_indicators": [
+        "iphone",
+        "android",
+        "samsung",
+        "canon",
+        "nikon",
+        "sony",
+        "fujifilm",
+        "olympus",
+        "panasonic",
+        "gopro"
+      ],
+      "device_patterns": [
+        "phone",
+        "camera",
+        "gopro",
+        "action cam"
+      ],
+      "filename_patterns": [
+        "family",
+        "vacation",
+        "birthday",
+        "holiday",
+        "kids",
+        "home",
+        "wedding",
+        "party",
+        "trip",
+        "travel"
+      ],
+      "resolution_preferences": [
+        "1080p",
+        "720p",
+        "4K"
+      ],
+      "confidence_boost": 0.2
+    },
+    "tutorials": {
+      "filename_patterns": [
+        "tutorial",
+        "howto",
+        "guide",
+        "lesson",
+        "learn",
+        "course",
+        "training",
+        "walkthrough",
+        "demo",
+        "example"
+      ],
+      "device_patterns": [
+        "screen record",
+        "screencast",
+        "obs",
+        "camtasia"
+      ],
+      "duration_range": [
+        300,
+        3600
+      ],
+      "confidence_boost": 0.15
+    },
+    "work": {
+      "filename_patterns": [
+        "meeting",
+        "presentation",
+        "zoom",
+        "teams",
+        "webinar",
+        "conference",
+        "standup",
+        "review",
+        "interview"
+      ],
+      "device_patterns": [
+        "screen record",
+        "zoom",
+        "teams",
+        "webex",
+        "meet"
+      ],
+      "duration_range": [
+        600,
+        7200
+      ],
+      "confidence_boost": 0.15
+    },
+    "tech": {
+      "filename_patterns": [
+        "coding",
+        "programming",
+        "developer",
+        "demo",
+        "screencast",
+        "tech",
+        "bug",
+        "feature",
+        "debug",
+        "development"
+      ],
+      "device_patterns": [
+        "screen record",
+        "obs",
+        "quicktime",
+        "screencast"
+      ],
+      "resolution_preferences": [
+        "1080p",
+        "1440p",
+        "4K"
+      ],
+      "confidence_boost": 0.15
+    },
+    "entertainment": {
+      "filename_patterns": [
+        "movie",
+        "show",
+        "episode",
+        "season",
+        "film",
+        "video",
+        "stream"
+      ],
+      "resolution_preferences": [
+        "1080p",
+        "4K"
+      ],
+      "duration_range": [
+        1200,
+        10800
+      ],
+      "confidence_boost": 0.1
+    }
+  },
+  "supported_formats": [
+    "mp4",
+    "avi",
+    "mov",
+    "mkv",
+    "wmv",
+    "webm",
+    "m4v",
+    "mpg",
+    "mpeg",
+    "flv",
+    "f4v"
+  ],
+  "quality_thresholds": {
+    "hd_min_width": 1280,
+    "hd_min_height": 720,
+    "4k_min_width": 3840,
+    "4k_min_height": 2160,
+    "min_acceptable_fps": 24,
+    "high_fps_threshold": 60
+  },
+  "extraction_preferences": {
+    "prefer_embedded_metadata": true,
+    "extract_gps_data": true,
+    "extract_camera_info": true,
+    "normalize_timestamps": true
+  }
+}
