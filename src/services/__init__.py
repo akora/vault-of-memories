@@ -1,37 +1,16 @@
 """
-Services package for Vault of Memories.
-
-Contains business logic and processing services.
+Processing services for vault operations.
 """
 
-# Configuration services
-from .configuration_manager import ConfigurationManager
-
-# File type analysis services
-from .file_type_analyzer import FileTypeAnalyzer
-
-# Image processing services
-from .image_processor import ImageProcessor
-
-# Document processing services
-from .document_processor import DocumentProcessor
-
-# Audio processing services
-from .audio_processor import AudioProcessor
-
-# Video processing services
-from .video_processor import VideoProcessor
-from .media_metadata_extractor import MediaMetadataExtractor
+from .video_processor import VideoProcessor, VideoProcessorImpl
+from .media_info_extractor import MediaInfoExtractor
 from .resolution_detector import ResolutionDetector
-from .video_categorizer import VideoCategorizer
-
-# Metadata consolidation services
+from .content_categorizer import ContentCategorizer
 from .metadata_consolidator import MetadataConsolidator
 from .priority_resolver import PriorityResolver
 from .timezone_preserver import TimezonePreserver
 from .manufacturer_standardizer import ManufacturerStandardizer
-
-# Filename generation services
+from .metadata_quality_assessor import MetadataQualityAssessor
 from .filename_generator import FilenameGenerator
 from .naming_pattern_engine import NamingPatternEngine
 from .component_formatter import ComponentFormatter
@@ -40,27 +19,16 @@ from .collision_detector import CollisionDetector
 from .length_limiter import LengthLimiter
 
 __all__ = [
-    # Configuration
-    "ConfigurationManager",
-    # File type
-    "FileTypeAnalyzer",
-    # Image
-    "ImageProcessor",
-    # Document
-    "DocumentProcessor",
-    # Audio
-    "AudioProcessor",
-    # Video
     "VideoProcessor",
-    "MediaMetadataExtractor",
+    "VideoProcessorImpl",
+    "MediaInfoExtractor",
     "ResolutionDetector",
-    "VideoCategorizer",
-    # Metadata
+    "ContentCategorizer",
     "MetadataConsolidator",
     "PriorityResolver",
     "TimezonePreserver",
     "ManufacturerStandardizer",
-    # Filename
+    "MetadataQualityAssessor",
     "FilenameGenerator",
     "NamingPatternEngine",
     "ComponentFormatter",
