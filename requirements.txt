@@ -11,3 +11,6 @@ flake8>=6.0.0
 
 # Audio Processing Dependencies (006-audio-processor)
 mutagen>=1.47.0
+
+# Video Processing Dependencies (007-video-processor)
+pymediainfo>=6.0.0
