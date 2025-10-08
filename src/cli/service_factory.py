@@ -37,11 +37,14 @@ class ServiceFactory:
         # Ensure vault root exists
         vault_root.mkdir(parents=True, exist_ok=True)
 
-        # Create database manager (it's a stub/placeholder for now)
+        # Create database path
+        db_path = vault_root / ".vault.db"
+
+        # Create database manager
         database_manager = DatabaseManager()
 
         # Create file ingestor
-        file_ingestor = FileIngestorImpl(database_manager)
+        file_ingestor = FileIngestorImpl(db_path)
 
         # Create metadata consolidator
         metadata_consolidator = MetadataConsolidator()
@@ -53,7 +56,9 @@ class ServiceFactory:
         quarantine_manager = QuarantineManager(vault_root)
 
         # Create duplicate handler
-        duplicate_handler = DuplicateHandler(vault_root, database_manager)
+        # Note: DuplicateHandler expects (duplicate_database, vault_root)
+        # For now, passing database_manager as placeholder for duplicate_database
+        duplicate_handler = DuplicateHandler(database_manager, vault_root)
 
         # Create integrity verifier
         integrity_verifier = IntegrityVerifier()
