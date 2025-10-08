@@ -1,0 +1,46 @@
+{
+  "_comment": "Classification rules for Organization Manager",
+  "_version": "1.0.0",
+
+  "mime_to_category": {
+    "image/jpeg": {"category": "photos", "subcategory": "processed", "priority": 50},
+    "image/png": {"category": "photos", "subcategory": "processed", "priority": 50},
+    "image/gif": {"category": "photos", "subcategory": "processed", "priority": 50},
+    "image/webp": {"category": "photos", "subcategory": "processed", "priority": 50},
+    "image/heic": {"category": "photos", "subcategory": "processed", "priority": 50},
+    "image/heif": {"category": "photos", "subcategory": "processed", "priority": 50},
+
+    "image/x-canon-cr2": {"category": "photos", "subcategory": "raw", "priority": 100},
+    "image/x-nikon-nef": {"category": "photos", "subcategory": "raw", "priority": 100},
+    "image/x-sony-arw": {"category": "photos", "subcategory": "raw", "priority": 100},
+    "image/x-adobe-dng": {"category": "photos", "subcategory": "raw", "priority": 100},
+
+    "application/pdf": {"category": "documents", "subcategory": "pdf", "priority": 80},
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {"category": "documents", "subcategory": "office", "priority": 80},
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {"category": "documents", "subcategory": "office", "priority": 80},
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation": {"category": "documents", "subcategory": "office", "priority": 80},
+    "text/plain": {"category": "documents", "subcategory": "text", "priority": 60},
+    "text/markdown": {"category": "documents", "subcategory": "text", "priority": 60},
+
+    "video/mp4": {"category": "videos", "subcategory": null, "priority": 70},
+    "video/quicktime": {"category": "videos", "subcategory": null, "priority": 70},
+    "video/x-msvideo": {"category": "videos", "subcategory": null, "priority": 70},
+    "video/x-matroska": {"category": "videos", "subcategory": null, "priority": 70},
+
+    "audio/mpeg": {"category": "audio", "subcategory": null, "priority": 70},
+    "audio/mp4": {"category": "audio", "subcategory": null, "priority": 70},
+    "audio/flac": {"category": "audio", "subcategory": null, "priority": 70},
+    "audio/wav": {"category": "audio", "subcategory": null, "priority": 70},
+
+    "application/zip": {"category": "archives", "subcategory": null, "priority": 60},
+    "application/x-7z-compressed": {"category": "archives", "subcategory": null, "priority": 60},
+    "application/x-tar": {"category": "archives", "subcategory": null, "priority": 60},
+    "application/gzip": {"category": "archives", "subcategory": null, "priority": 60}
+  },
+
+  "fallback": {
+    "default_category": "other",
+    "default_subcategory": null,
+    "confidence_threshold": 0.5
+  }
+}

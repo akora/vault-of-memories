@@ -1,0 +1,155 @@
+{
+  "description": "Filename sanitization rules for cross-platform compatibility",
+  "version": "1.0.0",
+  "invalid_characters": {
+    "description": "Characters that are invalid in filenames (strictest common set - Windows)",
+    "characters": [
+      "/",
+      "\\",
+      ":",
+      "*",
+      "?",
+      "\"",
+      "<",
+      ">",
+      "|"
+    ],
+    "action": "remove",
+    "reason": "Invalid on Windows, macOS, or Linux filesystems"
+  },
+  "replacement_rules": {
+    "description": "Characters to replace for cleaner, more consistent filenames",
+    "rules": [
+      {
+        "from": " ",
+        "to": "-",
+        "reason": "Spaces to hyphens for URL-friendliness and consistency"
+      },
+      {
+        "from": "_",
+        "to": "-",
+        "reason": "Underscores to hyphens for consistency"
+      },
+      {
+        "from": ".",
+        "to": "-",
+        "reason": "Dots to hyphens (except in extension) to avoid confusion"
+      }
+    ]
+  },
+  "remove_characters": {
+    "description": "Characters to remove entirely",
+    "characters": [
+      "\t",
+      "\n",
+      "\r",
+      "\u0000"
+    ],
+    "reason": "Control characters and null bytes"
+  },
+  "normalization_rules": {
+    "consecutive_separators": {
+      "description": "Normalize multiple consecutive separators to single separator",
+      "pattern": "-{2,}",
+      "replacement": "-",
+      "example": "foo---bar → foo-bar"
+    },
+    "trim_separators": {
+      "description": "Remove leading and trailing separators",
+      "characters": [
+        "-",
+        "_",
+        "."
+      ],
+      "example": "-foo-bar- → foo-bar"
+    }
+  },
+  "extension_rules": {
+    "description": "Special rules for file extensions",
+    "normalize_case": "lowercase",
+    "remove_characters": [
+      " ",
+      "-",
+      "_"
+    ],
+    "preserve_dot": true,
+    "examples": [
+      ".JPG → .jpg",
+      ". PDF → .pdf",
+      ".tar.gz → .tar.gz"
+    ]
+  },
+  "unicode_handling": {
+    "description": "How to handle Unicode characters in filenames",
+    "strategy": "preserve",
+    "normalization_form": "NFC",
+    "notes": [
+      "Most modern filesystems support Unicode",
+      "Preserve Unicode for better internationalization",
+      "Normalize to NFC form for consistency"
+    ]
+  },
+  "length_constraints": {
+    "max_filename_length": 255,
+    "max_path_length": 4096,
+    "reason": "Common filesystem limits (NTFS, ext4, APFS)",
+    "notes": [
+      "255 bytes for filename on most filesystems",
+      "Some filesystems count in characters, others in bytes",
+      "UTF-8 characters can be 1-4 bytes each"
+    ]
+  },
+  "reserved_names": {
+    "description": "Names reserved on Windows (case-insensitive)",
+    "names": [
+      "CON",
+      "PRN",
+      "AUX",
+      "NUL",
+      "COM1",
+      "COM2",
+      "COM3",
+      "COM4",
+      "COM5",
+      "COM6",
+      "COM7",
+      "COM8",
+      "COM9",
+      "LPT1",
+      "LPT2",
+      "LPT3",
+      "LPT4",
+      "LPT5",
+      "LPT6",
+      "LPT7",
+      "LPT8",
+      "LPT9"
+    ],
+    "action": "prefix_with_underscore",
+    "example": "CON.txt → _CON.txt"
+  },
+  "examples": {
+    "sanitization_examples": [
+      {
+        "input": "My Document: Final Version.pdf",
+        "output": "My-Document-Final-Version.pdf",
+        "changes": "Replaced : with nothing, spaces with hyphens"
+      },
+      {
+        "input": "photo_2024/03/15.jpg",
+        "output": "photo-2024-03-15.jpg",
+        "changes": "Removed slashes, replaced underscores with hyphens"
+      },
+      {
+        "input": "file   with    spaces.txt",
+        "output": "file-with-spaces.txt",
+        "changes": "Normalized multiple spaces to single hyphens"
+      },
+      {
+        "input": "test*file?.doc",
+        "output": "testfile.doc",
+        "changes": "Removed invalid characters * and ?"
+      }
+    ]
+  }
+}
