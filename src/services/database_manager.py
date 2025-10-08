@@ -47,6 +47,82 @@ class DatabaseManager:
         CREATE INDEX IF NOT EXISTS idx_checksum ON file_records(checksum);
         CREATE INDEX IF NOT EXISTS idx_status ON file_records(status);
         CREATE INDEX IF NOT EXISTS idx_created_at ON file_records(created_at);
+
+        -- Move operations tracking (Feature 011)
+        CREATE TABLE IF NOT EXISTS move_operations (
+            operation_id TEXT PRIMARY KEY,
+            source_path TEXT NOT NULL,
+            destination_path TEXT NOT NULL,
+            file_hash TEXT NOT NULL,
+            file_size INTEGER NOT NULL,
+            status TEXT NOT NULL,
+            created_at REAL NOT NULL DEFAULT (strftime('%s', 'now')),
+            started_at REAL,
+            completed_at REAL,
+            error_message TEXT,
+            rollback_attempted INTEGER DEFAULT 0,
+            rollback_success INTEGER
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_move_file_hash ON move_operations(file_hash);
+        CREATE INDEX IF NOT EXISTS idx_move_status ON move_operations(status);
+        CREATE INDEX IF NOT EXISTS idx_move_created_at ON move_operations(created_at);
+
+        -- Quarantine records (Feature 011)
+        CREATE TABLE IF NOT EXISTS quarantine_records (
+            quarantine_id TEXT PRIMARY KEY,
+            file_path TEXT NOT NULL,
+            original_path TEXT NOT NULL,
+            intended_destination TEXT NOT NULL,
+            error_type TEXT NOT NULL,
+            error_message TEXT NOT NULL,
+            error_traceback TEXT,
+            quarantined_at REAL NOT NULL DEFAULT (strftime('%s', 'now')),
+            recovery_attempts INTEGER DEFAULT 0,
+            last_recovery_attempt REAL,
+            file_hash TEXT,
+            file_size INTEGER NOT NULL,
+            can_retry INTEGER DEFAULT 1,
+            metadata_snapshot TEXT
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_quarantine_error_type ON quarantine_records(error_type);
+        CREATE INDEX IF NOT EXISTS idx_quarantine_date ON quarantine_records(quarantined_at);
+        CREATE INDEX IF NOT EXISTS idx_quarantine_file_hash ON quarantine_records(file_hash);
+
+        -- Duplicate tracking (Feature 011)
+        CREATE TABLE IF NOT EXISTS duplicate_records (
+            duplicate_id TEXT PRIMARY KEY,
+            original_file_id TEXT NOT NULL,
+            duplicate_path TEXT NOT NULL,
+            original_path TEXT NOT NULL,
+            file_hash TEXT NOT NULL,
+            detected_at REAL NOT NULL DEFAULT (strftime('%s', 'now')),
+            duplicate_size INTEGER NOT NULL,
+            metadata_diff TEXT,
+            source_path TEXT NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_duplicate_hash ON duplicate_records(file_hash);
+        CREATE INDEX IF NOT EXISTS idx_duplicate_original ON duplicate_records(original_file_id);
+
+        -- Batch operations tracking (Feature 011)
+        CREATE TABLE IF NOT EXISTS batch_operations (
+            batch_id TEXT PRIMARY KEY,
+            total_operations INTEGER NOT NULL,
+            successful_count INTEGER DEFAULT 0,
+            duplicate_count INTEGER DEFAULT 0,
+            quarantine_count INTEGER DEFAULT 0,
+            failed_count INTEGER DEFAULT 0,
+            total_time_ms REAL,
+            created_at REAL NOT NULL DEFAULT (strftime('%s', 'now')),
+            completed_at REAL,
+            validate_space INTEGER DEFAULT 1,
+            parallel INTEGER DEFAULT 0,
+            max_workers INTEGER DEFAULT 1
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_batch_created ON batch_operations(created_at);
         """
 
         self.connection.executescript(schema_sql)

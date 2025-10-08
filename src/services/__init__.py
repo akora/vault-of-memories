@@ -32,6 +32,12 @@ from .classification_engine import ClassificationEngine
 from .mime_detector import MimeDetector
 from .organization_manager import OrganizationManager
 
+# File mover services (Feature 011)
+from .integrity_verifier import IntegrityVerifier, IntegrityCheckResult
+from .atomic_mover import AtomicMover, AtomicMoveResult
+from .quarantine_manager import QuarantineManager
+from .file_mover import FileMover
+
 __all__ = [
     # Video processor
     "VideoProcessor",
@@ -60,4 +66,11 @@ __all__ = [
     'ClassificationEngine',
     'MimeDetector',
     'OrganizationManager',
+    # File mover
+    'IntegrityVerifier',
+    'IntegrityCheckResult',
+    'AtomicMover',
+    'AtomicMoveResult',
+    'QuarantineManager',
+    'FileMover',
 ]

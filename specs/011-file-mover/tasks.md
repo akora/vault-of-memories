@@ -41,9 +41,9 @@
 - Paths shown below assume single project structure from plan.md
 
 ## Phase 11.1: Setup
-- [ ] T001 Verify existing dependencies are sufficient (shutil, hashlib, pathlib from stdlib)
-- [ ] T002 Create database schema for move operations, quarantine records, and duplicate tracking in src/services/database_manager.py
-- [ ] T003 Create quarantine directory structure configuration in config/quarantine_settings.json
+- [x] T001 Verify existing dependencies are sufficient (shutil, hashlib, pathlib from stdlib)
+- [x] T002 Create database schema for move operations, quarantine records, and duplicate tracking in src/services/database_manager.py
+- [x] T003 Create quarantine directory structure configuration in config/quarantine_settings.json
 
 ## Phase 11.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 11.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
@@ -83,23 +83,23 @@
 ## Phase 11.3: Core Implementation (ONLY after tests are failing)
 
 ### Models (Parallel - different files)
-- [ ] T032 [P] Create MoveOperation data model in src/models/move_operation.py
-- [ ] T033 [P] Create MoveResult data model in src/models/move_result.py
+- [x] T032 [P] Create MoveOperation data model in src/models/move_operation.py
+- [x] T033 [P] Create MoveResult data model in src/models/move_result.py
 - [ ] T034 [P] Create DuplicateRecord data model in src/models/duplicate_record.py
-- [ ] T035 [P] Create QuarantineRecord data model in src/models/quarantine_record.py
+- [x] T035 [P] Create QuarantineRecord data model in src/models/quarantine_record.py
 - [ ] T036 [P] Create TransactionContext data model in src/models/transaction_context.py
-- [ ] T037 [P] Create BatchMoveRequest data model in src/models/batch_move_request.py
-- [ ] T038 [P] Create BatchMoveResult data model in src/models/batch_move_result.py
-- [ ] T039 [P] Create IntegrityCheckResult data model in src/models/integrity_check_result.py
-- [ ] T040 [P] Create OperationStatus and QuarantineReason enumerations in src/models/enums.py (extend existing)
+- [x] T037 [P] Create BatchMoveRequest data model in src/models/batch_move_request.py
+- [x] T038 [P] Create BatchMoveResult data model in src/models/batch_move_result.py
+- [x] T039 [P] Create IntegrityCheckResult data model in src/models/integrity_check_result.py (integrated in IntegrityVerifier)
+- [x] T040 [P] Create OperationStatus and QuarantineReason enumerations in src/models/enums.py (OperationStatus in move_operation.py, QuarantineReason in quarantine_record.py)
 
 ### Services (Sequential - dependencies between services)
-- [ ] T041 Implement IntegrityVerifier with hash calculation and batch verification in src/services/integrity_verifier.py
-- [ ] T042 Implement AtomicMover with shutil-based moves and rollback in src/services/atomic_mover.py
-- [ ] T043 Implement DuplicateHandler with content-based deduplication in src/services/duplicate_handler.py
-- [ ] T044 Implement QuarantineManager with error classification and structured storage in src/services/quarantine_manager.py
+- [x] T041 Implement IntegrityVerifier with hash calculation and batch verification in src/services/integrity_verifier.py
+- [x] T042 Implement AtomicMover with shutil-based moves and rollback in src/services/atomic_mover.py
+- [ ] T043 Implement DuplicateHandler with content-based deduplication in src/services/duplicate_handler.py (uses existing DuplicateDatabase)
+- [x] T044 Implement QuarantineManager with error classification and structured storage in src/services/quarantine_manager.py
 - [ ] T045 Implement TransactionManager for coordinating file and database operations in src/services/transaction_manager.py
-- [ ] T046 Implement FileMover main orchestration logic in src/services/file_mover.py
+- [x] T046 Implement FileMover main orchestration logic in src/services/file_mover.py
 
 ## Phase 11.4: Configuration & Integration
 - [ ] T047 Extend database schema with move_operations, quarantine_records, and batch_operations tables in src/services/database_manager.py

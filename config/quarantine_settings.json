@@ -1,0 +1,66 @@
+{
+  "quarantine_root": "quarantine",
+  "folder_structure": {
+    "checksum_mismatch": {
+      "description": "Files with integrity verification failures",
+      "auto_retry": false,
+      "max_recovery_attempts": 0
+    },
+    "permission_error": {
+      "description": "Files with access or permission issues",
+      "auto_retry": true,
+      "max_recovery_attempts": 3
+    },
+    "disk_space_error": {
+      "description": "Files quarantined due to insufficient disk space",
+      "auto_retry": true,
+      "max_recovery_attempts": 5
+    },
+    "path_too_long": {
+      "description": "Files with paths exceeding OS limits",
+      "auto_retry": false,
+      "max_recovery_attempts": 0
+    },
+    "invalid_characters": {
+      "description": "Files with invalid characters in path",
+      "auto_retry": false,
+      "max_recovery_attempts": 0
+    },
+    "destination_exists": {
+      "description": "Files where destination already exists",
+      "auto_retry": false,
+      "max_recovery_attempts": 1
+    },
+    "network_error": {
+      "description": "Files with network storage issues",
+      "auto_retry": true,
+      "max_recovery_attempts": 10
+    },
+    "corruption_detected": {
+      "description": "Files that appear corrupted",
+      "auto_retry": false,
+      "max_recovery_attempts": 0
+    },
+    "unknown_error": {
+      "description": "Unclassified errors",
+      "auto_retry": false,
+      "max_recovery_attempts": 1
+    }
+  },
+  "recovery_policies": {
+    "retry_delay_seconds": 60,
+    "exponential_backoff": true,
+    "max_backoff_seconds": 3600,
+    "notify_on_permanent_quarantine": true
+  },
+  "metadata_capture": {
+    "include_traceback": true,
+    "include_system_info": false,
+    "include_file_sample": false
+  },
+  "cleanup_policies": {
+    "auto_delete_after_days": null,
+    "archive_old_quarantine": false,
+    "keep_metadata_json": true
+  }
+}
