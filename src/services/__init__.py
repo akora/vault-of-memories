@@ -39,6 +39,11 @@ from .quarantine_manager import QuarantineManager
 from .duplicate_handler import DuplicateHandler, DuplicateRecord as DuplicateRecordService
 from .file_mover import FileMover
 
+# CLI interface services (Feature 013)
+from .pipeline_orchestrator import PipelineOrchestrator
+from .interrupt_handler import InterruptHandler
+from .progress_monitor import ProgressMonitor
+
 __all__ = [
     # Video processor
     "VideoProcessor",
@@ -76,4 +81,8 @@ __all__ = [
     'DuplicateHandler',
     'DuplicateRecordService',
     'FileMover',
+    # CLI interface
+    'PipelineOrchestrator',
+    'InterruptHandler',
+    'ProgressMonitor',
 ]
