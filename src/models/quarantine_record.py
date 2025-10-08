@@ -3,7 +3,7 @@ QuarantineRecord data model.
 Tracks files in quarantine with recovery information.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
@@ -40,6 +40,10 @@ class QuarantineRecord:
     metadata_snapshot: Optional[dict] = None
     file_hash: Optional[str] = None
     can_retry: bool = False
+    # Error handler fields (Feature 012)
+    severity: Optional['ErrorSeverity'] = None  # Error severity level
+    escalation_level: int = 0  # Number of times error was escalated
+    previous_attempts: list[datetime] = field(default_factory=list)  # History of retry timestamps
 
     def __post_init__(self):
         """Validate quarantine record"""
