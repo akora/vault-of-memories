@@ -26,6 +26,13 @@ from .classification_rule import ClassificationRule
 from .folder_structure import FolderStructure
 from .creation_result import CreationResult
 
+# File mover models (Feature 011)
+from .move_operation import MoveOperation, OperationStatus
+from .move_result import MoveResult
+from .quarantine_record import QuarantineRecord, QuarantineReason
+from .batch_move_request import BatchMoveRequest
+from .batch_move_result import BatchMoveResult
+
 __all__ = [
     # Video processor
     "VideoMetadata",
@@ -49,4 +56,12 @@ __all__ = [
     'ClassificationRule',
     'FolderStructure',
     'CreationResult',
+    # File mover
+    'MoveOperation',
+    'OperationStatus',
+    'MoveResult',
+    'QuarantineRecord',
+    'QuarantineReason',
+    'BatchMoveRequest',
+    'BatchMoveResult',
 ]
