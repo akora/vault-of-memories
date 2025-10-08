@@ -18,6 +18,7 @@ class ColorFormatter:
     BLUE = '\033[94m'
     CYAN = '\033[96m'
     MAGENTA = '\033[95m'
+    BOLD = '\033[1m'
     RESET = '\033[0m'
 
     def __init__(self):
@@ -25,15 +26,16 @@ class ColorFormatter:
         # Disable colors if not TTY or NO_COLOR set
         if not self.is_terminal():
             self.GREEN = self.YELLOW = self.RED = self.BLUE = ''
-            self.CYAN = self.MAGENTA = self.RESET = ''
+            self.CYAN = self.MAGENTA = self.BOLD = self.RESET = ''
 
-    def colorize(self, text: str, color: str) -> str:
+    def colorize(self, text: str, color: str, bold: bool = False) -> str:
         """
         Apply color to text.
 
         Args:
             text: Text to colorize
             color: Color name (green, yellow, red, blue, cyan, magenta)
+            bold: Whether to make text bold
 
         Returns:
             Text with ANSI color codes
@@ -49,7 +51,8 @@ class ColorFormatter:
 
         code = color_codes.get(color.lower(), '')
         if code:
-            return f"{code}{text}{self.RESET}"
+            prefix = f"{self.BOLD}{code}" if bold else code
+            return f"{prefix}{text}{self.RESET}"
         return text
 
     def success(self, text: str) -> str:

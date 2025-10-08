@@ -144,7 +144,7 @@ class ValidateCommand:
 
                 # Detect MIME type
                 try:
-                    mime_type = self.mime_detector.detect(file_path)
+                    mime_type, method, confidence = self.mime_detector.detect(file_path)
                     results['by_type'][mime_type] += 1
 
                     # Check if supported (basic check)
