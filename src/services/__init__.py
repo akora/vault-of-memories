@@ -36,6 +36,7 @@ from .organization_manager import OrganizationManager
 from .integrity_verifier import IntegrityVerifier, IntegrityCheckResult
 from .atomic_mover import AtomicMover, AtomicMoveResult
 from .quarantine_manager import QuarantineManager
+from .duplicate_handler import DuplicateHandler, DuplicateRecord as DuplicateRecordService
 from .file_mover import FileMover
 
 __all__ = [
@@ -72,5 +73,7 @@ __all__ = [
     'AtomicMover',
     'AtomicMoveResult',
     'QuarantineManager',
+    'DuplicateHandler',
+    'DuplicateRecordService',
     'FileMover',
 ]
