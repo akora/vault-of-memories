@@ -235,13 +235,49 @@ class PipelineOrchestrator:
                 progress.successful_count += 1
                 return (True, None)
 
-            # For now, simplified pipeline
-            # TODO: Integrate with actual processors in future tasks
-            progress.successful_count += 1
-            return (True, None)
+            # Stage 1: Ingest file (duplicate detection)
+            progress.current_stage = str(PipelineStage.INGESTING)
+            file_record = self.file_ingestor.ingest_file(file_path)
+
+            # Check if duplicate
+            if file_record.status.value == "duplicate":
+                progress.duplicate_count += 1
+                return (True, "Duplicate file")
+
+            # Stage 2: Extract metadata (consolidator handles type-specific extraction)
+            progress.current_stage = str(PipelineStage.EXTRACTING)
+            consolidated_metadata = self.metadata_consolidator.consolidate(file_path)
+
+            # Stage 3: Determine organization path
+            progress.current_stage = str(PipelineStage.ORGANIZING)
+
+            # Convert ConsolidatedMetadata to dict for organization_manager
+            from dataclasses import asdict
+            metadata_dict = asdict(consolidated_metadata)
+
+            organization_decision = self.organization_manager.determine_path(
+                file_path=file_path,
+                metadata=metadata_dict
+            )
+
+            # Stage 4: Move file to vault
+            progress.current_stage = str(PipelineStage.MOVING)
+            move_result = self.file_mover.move_file(
+                source_path=file_path,
+                destination_path=organization_decision.vault_path.full_path,
+                metadata=metadata_dict,
+                checksum=file_record.checksum
+            )
+
+            if move_result.success:
+                progress.successful_count += 1
+                return (True, None)
+            else:
+                progress.failed_count += 1
+                return (False, move_result.error)
 
         except Exception as e:
-            logger.error(f"Error processing {file_path}: {e}")
+            logger.error(f"Error processing {file_path}: {e}", exc_info=True)
             progress.failed_count += 1
             return (False, str(e))
 
