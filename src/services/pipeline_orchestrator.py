@@ -255,7 +255,7 @@ class PipelineOrchestrator:
             from dataclasses import asdict
             metadata_dict = asdict(consolidated_metadata)
 
-            organization_decision = self.organization_manager.determine_path(
+            vault_path = self.organization_manager.determine_path(
                 file_path=file_path,
                 metadata=metadata_dict
             )
@@ -264,9 +264,8 @@ class PipelineOrchestrator:
             progress.current_stage = str(PipelineStage.MOVING)
             move_result = self.file_mover.move_file(
                 source_path=file_path,
-                destination_path=organization_decision.vault_path.full_path,
-                metadata=metadata_dict,
-                checksum=file_record.checksum
+                destination_path=vault_path.full_path,
+                metadata=metadata_dict
             )
 
             if move_result.success:
