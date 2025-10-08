@@ -16,7 +16,7 @@ from src.cli.commands import (
     RecoverCommand,
     ValidateCommand
 )
-from src.services import PipelineOrchestrator, ProgressMonitor
+from src.cli.service_factory import ServiceFactory
 from src.cli.formatters.summary_formatter import SummaryFormatter
 
 logger = logging.getLogger(__name__)
@@ -97,13 +97,26 @@ def execute_command(options: CommandOptions) -> int:
 
     # Route to appropriate command
     if options.command == 'process':
-        orchestrator = PipelineOrchestrator()
-        progress_monitor = ProgressMonitor()
+        # Create command first to validate options before creating expensive services
         command = ProcessCommand(
-            orchestrator=orchestrator,
-            progress_monitor=progress_monitor,
+            orchestrator=None,  # Will be created on-demand
+            progress_monitor=None,
             formatter=formatter
         )
+
+        # Validate before creating services
+        errors = command.validate(options)
+        if errors:
+            for error in errors:
+                logger.error(error)
+            return 2
+
+        # Create services after validation passes
+        orchestrator = ServiceFactory.create_pipeline_orchestrator(options.vault_root)
+        progress_monitor = ServiceFactory.create_progress_monitor()
+        command.orchestrator = orchestrator
+        command.progress_monitor = progress_monitor
+
         return command.execute(options)
 
     elif options.command == 'status':
@@ -111,8 +124,8 @@ def execute_command(options: CommandOptions) -> int:
         return command.execute(options)
 
     elif options.command == 'recover':
-        orchestrator = PipelineOrchestrator()
-        progress_monitor = ProgressMonitor()
+        orchestrator = ServiceFactory.create_pipeline_orchestrator(options.vault_root)
+        progress_monitor = ServiceFactory.create_progress_monitor()
         command = RecoverCommand(
             orchestrator=orchestrator,
             progress_monitor=progress_monitor,
