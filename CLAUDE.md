@@ -6,10 +6,10 @@ Auto-generated from all feature plans. Last updated: 2025-10-08
 
 **Language/Version**: Python 3.11
 **Primary Dependencies**:
-- Python standard library (os, pathlib, datetime, threading)
+- Python standard library (argparse, logging, pathlib, signal, os, datetime, threading)
 - pathvalidate (v3.3.1+) - cross-platform filename validation
 - python-magic - MIME type detection
-- Existing: MetadataConsolidator (feature 008)
+- Existing vault modules (FileIngestor, MetadataConsolidator, OrganizationManager, FileMover)
 
 **Storage**: Filesystem-based vault structure
 **Testing**: pytest (contract, integration, unit tests)
@@ -20,7 +20,9 @@ Auto-generated from all feature plans. Last updated: 2025-10-08
 src/
 ├── models/          # Data models (VaultPath, Classification, DateInfo, etc.)
 ├── services/        # Core services (OrganizationManager, ClassificationEngine, etc.)
-├── cli/            # Command-line interface
+├── cli/            # Command-line interface (Feature 013)
+│   ├── commands/   # Command implementations (process, status, recover)
+│   └── formatters/ # Output formatting (progress, summary)
 └── lib/            # Shared utilities
 
 tests/
@@ -31,12 +33,33 @@ tests/
 
 ## Key Concepts
 
+### CLI Interface (013-cli-interface)
+- Orchestrates complete vault processing pipeline
+- Provides real-time progress feedback with callback pattern
+- Generates comprehensive processing summaries
+- Handles graceful interruption (SIGINT/SIGTERM)
+- Supports dry-run mode for preview
+- Uses stdlib argparse (zero external dependencies)
+
+### Pipeline Stages
+```
+Validation → Discovery → Ingestion → Extraction → Consolidation →
+Renaming → Organization → Moving → Summary
+```
+
 ### Organization Manager (010-organization-manager)
 - Determines file placement in vault structure
 - Applies content classification rules (photos, documents, videos, audio, archives)
 - Creates date-based folder hierarchy (YYYY/YYYY-MM/YYYY-MM-DD)
 - Handles cross-platform compatibility (Windows, macOS, Linux)
 - Thread-safe parallel processing
+
+### File Mover (011-file-mover)
+- Atomic file operations with cross-device support
+- SHA256 integrity verification
+- Automatic rollback on failure
+- Duplicate detection and handling
+- 9-type quarantine error classification
 
 ### Classification Strategy
 - Multi-level fallback: MIME → extension → header inspection → default
@@ -50,14 +73,21 @@ tests/
 
 ## Commands
 ```bash
-# Create organization plan
-/plan 010-organization-manager
+# Main processing command
+vault process <source> [--vault-root PATH] [--dry-run] [--verbose]
 
-# Generate tasks
-/tasks
+# Status/recovery commands
+vault status [--vault-root PATH]
+vault recover [--vault-root PATH] [--quarantine-type TYPE]
 
-# Run implementation
-/implement
+# Utility commands
+vault validate <source>  # Check files before processing
+vault help [command]     # Detailed help
+
+# Development commands
+/plan <feature-id>       # Create implementation plan
+/tasks                   # Generate task breakdown
+/implement               # Execute implementation
 ```
 
 ## Code Style
@@ -66,6 +96,7 @@ tests/
 - Pathlib for all filesystem operations
 - Explicit error handling with logging
 - Cross-platform compatibility (Windows, macOS, Linux)
+- Follow POSIX CLI conventions and standard exit codes
 
 ## Constitution Compliance
 - **Simplicity First**: Use standard library where possible
@@ -75,6 +106,8 @@ tests/
 - **Strategic Documentation**: Self-documenting code with clear naming
 
 ## Recent Changes
+- 013-cli-interface: Added CLI orchestration with argparse-based interface, progress monitoring, and command structure
+- 011-file-mover: Added File Mover with atomic operations, integrity verification, and quarantine management
 - 010-organization-manager: Added Organization Manager with cross-platform file organization, classification engine, and date extraction
 
 <!-- MANUAL ADDITIONS START -->
