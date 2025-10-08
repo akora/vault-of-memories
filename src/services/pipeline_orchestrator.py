@@ -15,6 +15,7 @@ from src.models import (
     ProgressState,
     PipelineStage
 )
+from src.services.filename_generator import FilenameGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +41,8 @@ class PipelineOrchestrator:
         file_ingestor,
         metadata_consolidator,
         organization_manager,
-        file_mover
+        file_mover,
+        filename_generator: Optional[FilenameGenerator] = None
     ):
         """
         Initialize pipeline orchestrator.
@@ -51,12 +53,14 @@ class PipelineOrchestrator:
             metadata_consolidator: Metadata consolidator instance
             organization_manager: Organization manager instance
             file_mover: File mover instance
+            filename_generator: Optional filename generator (creates one if None)
         """
         self.database_manager = database_manager
         self.file_ingestor = file_ingestor
         self.metadata_consolidator = metadata_consolidator
         self.organization_manager = organization_manager
         self.file_mover = file_mover
+        self.filename_generator = filename_generator or FilenameGenerator()
         self._interrupted = False
 
     def execute(
@@ -260,11 +264,31 @@ class PipelineOrchestrator:
                 metadata=metadata_dict
             )
 
+            # Stage 3.5: Generate unique filename
+            progress.current_stage = str(PipelineStage.RENAMING)
+
+            # Determine file type from metadata or mime_type
+            file_type = metadata_dict.get('primary_type', 'unknown')
+            if file_type == 'text':
+                file_type = 'document'
+
+            generated_filename = self.filename_generator.generate(
+                metadata=metadata_dict,
+                file_type=file_type,
+                original_filename=file_path.name,
+                preview=False
+            )
+
+            # Combine vault path directory with generated filename
+            final_destination = vault_path.full_path / generated_filename.filename
+
+            logger.info(f"Generated filename: {generated_filename.filename} for {file_path.name}")
+
             # Stage 4: Move file to vault
             progress.current_stage = str(PipelineStage.MOVING)
             move_result = self.file_mover.move_file(
                 source_path=file_path,
-                destination_path=vault_path.full_path,
+                destination_path=final_destination,
                 metadata=metadata_dict
             )
 
