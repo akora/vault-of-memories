@@ -15,9 +15,10 @@ class TestFileMover:
 
     def test_move_file_contract(self, tmp_path):
         """Test that move_file follows the contract specification"""
-        # This test will fail until FileMover is implemented
         from src.services.file_mover import FileMover
         from src.models.move_result import MoveResult
+        from src.services.integrity_verifier import IntegrityVerifier
+        from src.services.atomic_mover import AtomicMover
 
         # Setup
         source = tmp_path / "source.txt"
@@ -28,14 +29,22 @@ class TestFileMover:
         # Create mocks for dependencies
         mock_db = Mock()
         mock_duplicate_handler = Mock()
-        mock_quarantine_manager = Mock()
-        mock_integrity_verifier = Mock()
+        mock_duplicate_handler.check_duplicate.return_value = (False, None)  # Not a duplicate
+
+        quarantine_root = tmp_path / "quarantine"
+        quarantine_root.mkdir()
+
+        from src.services.quarantine_manager import QuarantineManager
+        quarantine_manager = QuarantineManager(quarantine_root)
+
+        # Use real IntegrityVerifier for this test
+        integrity_verifier = IntegrityVerifier()
 
         file_mover = FileMover(
             mock_db,
             mock_duplicate_handler,
-            mock_quarantine_manager,
-            mock_integrity_verifier
+            quarantine_manager,
+            integrity_verifier
         )
 
         # Execute
@@ -50,20 +59,52 @@ class TestFileMover:
         assert hasattr(result, 'is_quarantined')
         assert hasattr(result, 'execution_time_ms')
 
+        # Verify file was actually moved
+        if result.success:
+            assert result.actual_destination.exists()
+            assert not source.exists()  # Source should be moved
+
     def test_move_batch_contract(self, tmp_path):
         """Test that move_batch follows the contract specification"""
         from src.services.file_mover import FileMover
         from src.models.batch_move_request import BatchMoveRequest
         from src.models.batch_move_result import BatchMoveResult
+        from src.models.move_operation import MoveOperation, OperationStatus
+        from src.services.integrity_verifier import IntegrityVerifier
+        from src.services.quarantine_manager import QuarantineManager
+        from datetime import datetime
+        import uuid
 
-        # This test will fail until FileMover is implemented
+        # Setup test file
+        source = tmp_path / "test.txt"
+        source.write_text("test content")
+        destination = tmp_path / "vault" / "test.txt"
+
         mock_db = Mock()
-        file_mover = FileMover(mock_db, Mock(), Mock(), Mock())
+        mock_duplicate_handler = Mock()
+        mock_duplicate_handler.check_duplicate.return_value = (False, None)
+
+        quarantine_manager = QuarantineManager(tmp_path / "quarantine")
+        integrity_verifier = IntegrityVerifier()
+
+        file_mover = FileMover(mock_db, mock_duplicate_handler, quarantine_manager, integrity_verifier)
+
+        # Create operation
+        file_hash = integrity_verifier.calculate_hash(source)
+        operation = MoveOperation(
+            operation_id=str(uuid.uuid4()),
+            source_path=source,
+            destination_path=destination,
+            file_hash=file_hash,
+            file_size=source.stat().st_size,
+            status=OperationStatus.PENDING,
+            created_at=datetime.now()
+        )
 
         batch_request = BatchMoveRequest(
             batch_id="test-batch",
-            operations=[],
-            validate_space=True,
+            operations=[operation],
+            validate_space=False,
             parallel=False,
             max_workers=1,
             stop_on_error=False
@@ -76,16 +117,26 @@ class TestFileMover:
         assert result.batch_id == "test-batch"
         assert hasattr(result, 'total_operations')
         assert hasattr(result, 'successful_count')
+        assert result.total_operations == 1
 
     def test_preview_move_contract(self, tmp_path):
         """Test that preview_move follows the contract specification"""
         from src.services.file_mover import FileMover
+        from src.services.integrity_verifier import IntegrityVerifier
+        from src.services.quarantine_manager import QuarantineManager
 
         source = tmp_path / "test.txt"
         source.write_text("content")
         destination = tmp_path / "vault" / "test.txt"
 
-        file_mover = FileMover(Mock(), Mock(), Mock(), Mock())
+        mock_db = Mock()
+        mock_duplicate_handler = Mock()
+        mock_duplicate_handler.check_duplicate.return_value = (False, None)
+
+        quarantine_manager = QuarantineManager(tmp_path / "quarantine")
+        integrity_verifier = IntegrityVerifier()
+
+        file_mover = FileMover(mock_db, mock_duplicate_handler, quarantine_manager, integrity_verifier)
         preview = file_mover.preview_move(source, destination)
 
         # Assert contract
