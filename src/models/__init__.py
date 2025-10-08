@@ -33,6 +33,9 @@ from .quarantine_record import QuarantineRecord, QuarantineReason
 from .batch_move_request import BatchMoveRequest
 from .batch_move_result import BatchMoveResult
 
+# Error handler models (Feature 012)
+from .error_severity import ErrorSeverity
+
 # CLI interface models (Feature 013)
 from .pipeline_stage import PipelineStage
 from .processing_context import ProcessingContext
@@ -71,6 +74,8 @@ __all__ = [
     'QuarantineReason',
     'BatchMoveRequest',
     'BatchMoveResult',
+    # Error handler
+    'ErrorSeverity',
     # CLI interface
     'PipelineStage',
     'ProcessingContext',

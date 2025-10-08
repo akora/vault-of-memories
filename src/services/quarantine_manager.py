@@ -10,6 +10,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import List, Optional
 from src.models.quarantine_record import QuarantineRecord, QuarantineReason
+from src.models.error_severity import ErrorSeverity
 
 
 class QuarantineManager:
@@ -44,6 +45,9 @@ class QuarantineManager:
         # Classify error
         error_type = self.classify_error(error)
 
+        # Classify severity
+        severity = self.classify_severity(error_type)
+
         # Generate quarantine path
         quarantine_path = self.get_quarantine_path(error_type, source_path.name)
 
@@ -71,13 +75,44 @@ class QuarantineManager:
             file_size=quarantine_path.stat().st_size if quarantine_path.exists() else 0,
             error_traceback=self._get_traceback(error),
             metadata_snapshot=metadata,
-            can_retry=self._can_retry(error_type)
+            can_retry=self._can_retry(error_type),
+            severity=severity
         )
 
         # Save metadata JSON
         self._save_metadata_json(quarantine_path, record)
 
         return record
+
+    def classify_severity(self, error_type: QuarantineReason) -> ErrorSeverity:
+        """
+        Classify quarantine reason into severity level.
+
+        Args:
+            error_type: QuarantineReason to classify
+
+        Returns:
+            Appropriate ErrorSeverity
+        """
+        severity_map = {
+            # CRITICAL: System-level failures
+            QuarantineReason.PERMISSION_ERROR: ErrorSeverity.CRITICAL,
+            QuarantineReason.DISK_SPACE_ERROR: ErrorSeverity.CRITICAL,
+
+            # ERROR: Processing failures
+            QuarantineReason.CORRUPTION_DETECTED: ErrorSeverity.ERROR,
+            QuarantineReason.CHECKSUM_MISMATCH: ErrorSeverity.ERROR,
+            QuarantineReason.UNKNOWN_ERROR: ErrorSeverity.ERROR,
+
+            # WARNING: Recoverable issues
+            QuarantineReason.PATH_TOO_LONG: ErrorSeverity.WARNING,
+            QuarantineReason.INVALID_CHARACTERS: ErrorSeverity.WARNING,
+
+            # INFO: Expected edge cases
+            QuarantineReason.DESTINATION_EXISTS: ErrorSeverity.INFO,
+            QuarantineReason.NETWORK_ERROR: ErrorSeverity.INFO,
+        }
+        return severity_map.get(error_type, ErrorSeverity.ERROR)
 
     def classify_error(self, error: Exception) -> QuarantineReason:
         """
@@ -145,13 +180,15 @@ class QuarantineManager:
 
     def list_quarantined_files(
         self,
-        error_type: Optional[QuarantineReason] = None
+        error_type: Optional[QuarantineReason] = None,
+        severity: Optional[ErrorSeverity] = None
     ) -> List[QuarantineRecord]:
         """
-        List files in quarantine, optionally filtered by error type.
+        List files in quarantine, optionally filtered by error type or severity.
 
         Args:
             error_type: Optional filter by error type
+            severity: Optional filter by severity level
 
         Returns:
             List of QuarantineRecord
@@ -229,7 +266,10 @@ class QuarantineManager:
             "quarantined_at": record.quarantined_at.isoformat(),
             "recovery_attempts": record.recovery_attempts,
             "file_size": record.file_size,
-            "can_retry": record.can_retry
+            "can_retry": record.can_retry,
+            "severity": record.severity.value if record.severity else None,
+            "escalation_level": record.escalation_level,
+            "previous_attempts": [dt.isoformat() for dt in record.previous_attempts]
         }
 
         with open(json_path, 'w') as f:

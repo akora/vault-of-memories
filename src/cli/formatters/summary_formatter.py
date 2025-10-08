@@ -5,8 +5,9 @@ Generates human-readable processing summaries and reports.
 """
 
 from pathlib import Path
+from collections import defaultdict
 
-from src.models import ProcessingResult
+from src.models import ProcessingResult, ErrorSeverity
 from .color_formatter import ColorFormatter
 
 
