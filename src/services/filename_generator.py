@@ -107,11 +107,25 @@ class FilenameGenerator:
         # Apply pattern to get base filename
         base_filename = self.pattern_engine.apply_pattern(pattern, prepared_metadata)
 
-        if not base_filename:
-            # Fallback to checksum-based name
-            logger.warning("Pattern resulted in empty filename, using fallback")
-            checksum = metadata.get("checksum", "unknown")[:8]
-            base_filename = f"{checksum}-{original_path.stem}"
+        # Check if filename is insufficient (metadata was mostly missing)
+        # Count how many meaningful components we got from the pattern
+        import re
+        # Count placeholder-like patterns that were filled
+        placeholders_in_pattern = len(re.findall(r'\{([^}]+)\}', pattern))
+        # Count meaningful words/identifiers in result (not just size/page numbers)
+        meaningful_parts = [p for p in re.split(r'[-_\s]+', base_filename)
+                          if p and not p.startswith(('s', 'p', 'br', 'ir')) and len(p) > 2]
+
+        # If we have a pattern with many placeholders but got very few meaningful results,
+        # fall back to original filename
+        if placeholders_in_pattern >= 3 and len(meaningful_parts) == 0:
+            # Fallback to original filename when metadata is insufficient
+            logger.warning(f"Pattern resulted in insufficient filename ('{base_filename}'), using original")
+            base_filename = original_path.stem
+        elif not base_filename:
+            # Complete fallback for empty results
+            logger.warning("Pattern resulted in empty filename, using original")
+            base_filename = original_path.stem
 
         # Sanitize the base filename
         sanitized_chars = 0
@@ -203,29 +217,32 @@ class FilenameGenerator:
         Returns:
             Prepared metadata with formatted components
         """
-        prepared = metadata.copy()
+        prepared = {}
 
-        # Extract date/time from datetime fields
+        # Extract values from MetadataField objects/dicts
+        # The pattern engine expects raw values, not MetadataField wrappers
+        for key, value in metadata.items():
+            # Handle MetadataField objects
+            if hasattr(value, 'value'):
+                prepared[key] = value.value
+            # Handle MetadataField dicts (from asdict conversion)
+            elif isinstance(value, dict) and 'value' in value:
+                prepared[key] = value['value']
+            else:
+                prepared[key] = value
+
+        # Format dates for pattern engine's COMPONENT_FORMATTERS
+        # The pattern engine's "date" formatter looks for creation_date/capture_date/modification_date
+        # and expects them to be datetime objects that it can format
         for date_field in ["creation_date", "capture_date", "modification_date"]:
-            if date_field in metadata and metadata[date_field]:
-                dt_value = metadata[date_field]
+            if date_field in prepared and prepared[date_field]:
+                dt_value = prepared[date_field]
+                # If it's already a datetime, the ComponentFormatter will handle it
+                # Just make sure it's not still wrapped
                 if hasattr(dt_value, 'value'):
-                    # MetadataField object
-                    dt_value = dt_value.value
-
-                if dt_value:
-                    prepared["date"] = self.formatter.format_date(dt_value)
-                    prepared["time"] = self.formatter.format_time(dt_value)
-                    break
-
-        # Extract device info from MetadataField objects if present
-        for field in ["device_make", "device_model", "title", "category", "author"]:
-            if field in metadata and metadata[field]:
-                value = metadata[field]
-                if hasattr(value, 'value'):
-                    prepared[field] = value.value
-                else:
-                    prepared[field] = value
+                    prepared[date_field] = dt_value.value
+                elif isinstance(dt_value, dict) and 'value' in dt_value:
+                    prepared[date_field] = dt_value['value']
 
         return prepared
 

@@ -267,10 +267,36 @@ class PipelineOrchestrator:
             # Stage 3.5: Generate unique filename
             progress.current_stage = str(PipelineStage.RENAMING)
 
-            # Determine file type from metadata or mime_type
-            file_type = metadata_dict.get('primary_type', 'unknown')
-            if file_type == 'text':
+            # Determine file type from metadata or mime_type or vault_path classification
+            file_type = metadata_dict.get('primary_type')
+            if not file_type or file_type == 'unknown':
+                # Try to infer from mime_type
+                mime_type = metadata_dict.get('mime_type', '') or metadata_dict.get('file_type', '')
+                if mime_type.startswith('image/'):
+                    file_type = 'image'
+                elif mime_type.startswith('video/'):
+                    file_type = 'video'
+                elif mime_type.startswith('audio/'):
+                    file_type = 'audio'
+                elif mime_type.startswith('application/pdf') or 'document' in mime_type or 'pdf' in mime_type.lower():
+                    file_type = 'document'
+                else:
+                    # Infer from vault path as last resort
+                    vault_path_str = str(vault_path.full_path).lower()
+                    if '/image' in vault_path_str or '/photo' in vault_path_str:
+                        file_type = 'image'
+                    elif '/video' in vault_path_str:
+                        file_type = 'video'
+                    elif '/audio' in vault_path_str or '/music' in vault_path_str:
+                        file_type = 'audio'
+                    elif '/document' in vault_path_str or '/pdf' in vault_path_str:
+                        file_type = 'document'
+                    else:
+                        file_type = 'unknown'
+            elif file_type == 'text':
                 file_type = 'document'
+
+            logger.debug(f"File type for naming: {file_type} (vault_path: {vault_path.full_path})")
 
             generated_filename = self.filename_generator.generate(
                 metadata=metadata_dict,

@@ -192,11 +192,116 @@ class MetadataConsolidator:
             return field_sources
 
         # Extract metadata from processor
-        # Note: Each processor would have been registered with their extract method
-        # This is a simplified version - in practice would call processor.process_xxx()
-        logger.debug(f"Would extract metadata using {file_type} processor")
+        try:
+            # Call the appropriate processor method based on file type
+            if file_type == 'image' and hasattr(processor, 'process_image'):
+                processor_metadata = processor.process_image(file_path)
+            elif file_type == 'document' and hasattr(processor, 'process_document'):
+                processor_metadata = processor.process_document(file_path)
+            elif file_type == 'audio' and hasattr(processor, 'process_audio'):
+                processor_metadata = processor.process_audio(file_path)
+            elif file_type == 'video' and hasattr(processor, 'process_video'):
+                processor_metadata = processor.process_video(file_path)
+            else:
+                logger.warning(f"Processor for {file_type} doesn't have expected process method")
+                return field_sources
 
-        # For now, return empty sources (processors would populate this)
+            # Convert processor metadata to field_sources format
+            # This extracts attributes from the metadata object and maps them to sources
+            field_sources = self._convert_processor_metadata(processor_metadata, file_type)
+            logger.debug(f"Extracted {len(field_sources)} fields from {file_type} processor")
+
+        except Exception as e:
+            logger.error(f"Error extracting metadata with {file_type} processor: {e}")
+            # Return empty sources on error - consolidation will still work with filesystem metadata
+
+        return field_sources
+
+    def _convert_processor_metadata(
+        self, processor_metadata: Any, file_type: str
+    ) -> Dict[str, Dict[MetadataSource, Any]]:
+        """
+        Convert processor-specific metadata to field_sources format.
+
+        Args:
+            processor_metadata: Metadata object from processor
+            file_type: Type of file being processed
+
+        Returns:
+            Dictionary mapping field names to source dictionaries
+        """
+        field_sources = {}
+        # Use EMBEDDED for processor-extracted metadata (PDF properties, ID3 tags, etc.)
+        source = MetadataSource.EMBEDDED
+
+        # Extract common fields from all processor types
+        # Handle nested structures in DocumentMetadata
+        if file_type == 'document':
+            # Timestamps
+            if hasattr(processor_metadata, 'timestamps') and processor_metadata.timestamps:
+                ts = processor_metadata.timestamps
+                if hasattr(ts, 'creation_date') and ts.creation_date:
+                    field_sources['creation_date'] = {source: ts.creation_date}
+                if hasattr(ts, 'modification_date') and ts.modification_date:
+                    field_sources['modification_date'] = {source: ts.modification_date}
+                # Fall back to filesystem dates
+                if hasattr(ts, 'file_creation_date') and ts.file_creation_date:
+                    if 'creation_date' not in field_sources:
+                        field_sources['creation_date'] = {MetadataSource.FILESYSTEM: ts.file_creation_date}
+
+            # Properties
+            if hasattr(processor_metadata, 'properties') and processor_metadata.properties:
+                props = processor_metadata.properties
+                if hasattr(props, 'title') and props.title:
+                    field_sources['title'] = {source: props.title}
+                if hasattr(props, 'page_count') and props.page_count:
+                    field_sources['page_count'] = {source: props.page_count}
+
+            # Author info
+            if hasattr(processor_metadata, 'author_info') and processor_metadata.author_info:
+                author_info = processor_metadata.author_info
+                if hasattr(author_info, 'author') and author_info.author:
+                    field_sources['author'] = {source: author_info.author}
+
+        # Type-specific fields for images
+        if file_type == 'image':
+            if hasattr(processor_metadata, 'camera_make') and processor_metadata.camera_make:
+                field_sources['device_make'] = {source: processor_metadata.camera_make}
+
+            if hasattr(processor_metadata, 'camera_model') and processor_metadata.camera_model:
+                field_sources['device_model'] = {source: processor_metadata.camera_model}
+
+            if hasattr(processor_metadata, 'capture_timestamp') and processor_metadata.capture_timestamp:
+                field_sources['capture_date'] = {source: processor_metadata.capture_timestamp}
+
+            if hasattr(processor_metadata, 'width') and processor_metadata.width:
+                field_sources['width'] = {source: processor_metadata.width}
+
+            if hasattr(processor_metadata, 'height') and processor_metadata.height:
+                field_sources['height'] = {source: processor_metadata.height}
+
+        # Type-specific fields for audio
+        elif file_type == 'audio':
+            if hasattr(processor_metadata, 'artist') and processor_metadata.artist:
+                field_sources['artist'] = {source: processor_metadata.artist}
+
+            if hasattr(processor_metadata, 'album') and processor_metadata.album:
+                field_sources['album'] = {source: processor_metadata.album}
+
+            if hasattr(processor_metadata, 'duration_seconds') and processor_metadata.duration_seconds:
+                field_sources['duration'] = {source: processor_metadata.duration_seconds}
+
+        # Type-specific fields for video
+        elif file_type == 'video':
+            if hasattr(processor_metadata, 'duration_seconds') and processor_metadata.duration_seconds:
+                field_sources['duration'] = {source: processor_metadata.duration_seconds}
+
+            if hasattr(processor_metadata, 'width') and processor_metadata.width:
+                field_sources['width'] = {source: processor_metadata.width}
+
+            if hasattr(processor_metadata, 'height') and processor_metadata.height:
+                field_sources['height'] = {source: processor_metadata.height}
+
         return field_sources
 
     def _consolidate_fields(

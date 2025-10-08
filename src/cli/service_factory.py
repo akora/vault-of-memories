@@ -18,6 +18,10 @@ from src.services.file_ingestor import FileIngestorImpl
 from src.services.metadata_consolidator import MetadataConsolidator
 from src.services.duplicate_handler import DuplicateHandler
 from src.services.integrity_verifier import IntegrityVerifier
+from src.services.image_processor import ImageProcessorImpl
+from src.services.document_processor import DocumentProcessorImpl
+from src.services.audio_processor import AudioProcessorImpl
+from src.services.video_processor import VideoProcessor
 
 
 class ServiceFactory:
@@ -48,6 +52,12 @@ class ServiceFactory:
 
         # Create metadata consolidator
         metadata_consolidator = MetadataConsolidator()
+
+        # Register specialized processors
+        metadata_consolidator.register_processor('image', ImageProcessorImpl())
+        metadata_consolidator.register_processor('document', DocumentProcessorImpl())
+        metadata_consolidator.register_processor('audio', AudioProcessorImpl())
+        metadata_consolidator.register_processor('video', VideoProcessor())
 
         # Create organization manager
         organization_manager = OrganizationManager(vault_root)
