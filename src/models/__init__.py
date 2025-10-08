@@ -33,6 +33,13 @@ from .quarantine_record import QuarantineRecord, QuarantineReason
 from .batch_move_request import BatchMoveRequest
 from .batch_move_result import BatchMoveResult
 
+# CLI interface models (Feature 013)
+from .pipeline_stage import PipelineStage
+from .processing_context import ProcessingContext
+from .progress_state import ProgressState
+from .processing_result import ProcessingResult
+from .command_options import CommandOptions
+
 __all__ = [
     # Video processor
     "VideoMetadata",
@@ -64,4 +71,10 @@ __all__ = [
     'QuarantineReason',
     'BatchMoveRequest',
     'BatchMoveResult',
+    # CLI interface
+    'PipelineStage',
+    'ProcessingContext',
+    'ProgressState',
+    'ProcessingResult',
+    'CommandOptions',
 ]
