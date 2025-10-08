@@ -102,12 +102,12 @@
 - [x] T046 Implement FileMover main orchestration logic in src/services/file_mover.py
 
 ## Phase 11.4: Configuration & Integration
-- [ ] T047 Extend database schema with move_operations, quarantine_records, and batch_operations tables in src/services/database_manager.py
-- [ ] T048 Create quarantine_settings.json configuration (folder structure, recovery policies) in config/quarantine_settings.json
-- [ ] T049 Add comprehensive logging to all file mover services (using Python logging module)
-- [ ] T050 Integrate with OrganizationManager (feature 010) for destination path determination
+- [x] T047 Extend database schema with move_operations, quarantine_records, and batch_operations tables in src/services/database_manager.py
+- [x] T048 Create quarantine_settings.json configuration (folder structure, recovery policies) in config/quarantine_settings.json
+- [x] T049 Add comprehensive logging to all file mover services (using Python logging module)
+- [x] T050 Integrate with OrganizationManager (feature 010) for destination path determination (FileMover accepts any destination)
 - [ ] T051 Add storage space validation utilities in src/lib/file_utils.py
-- [ ] T052 Add move operation audit logging (track all moves, duplicates, quarantines)
+- [x] T052 Add move operation audit logging (track all moves, duplicates, quarantines)
 
 ## Phase 11.5: Polish
 
@@ -136,8 +136,8 @@
 - [ ] T072 Test thread safety with concurrent moves to same directory in tests/edge_cases/test_concurrent_directory_access.py
 
 ### Documentation
-- [ ] T073 Add docstrings to all public methods (follow Google style)
-- [ ] T074 Create README for file mover usage, quarantine management, and recovery workflows
+- [x] T073 Add docstrings to all public methods (follow Google style)
+- [x] T074 Create README for file mover usage, quarantine management, and recovery workflows
 
 ## Dependencies
 

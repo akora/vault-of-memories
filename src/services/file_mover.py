@@ -5,6 +5,7 @@ Orchestrates file move operations with duplicate detection, quarantine managemen
 
 import uuid
 import time
+import logging
 from pathlib import Path
 from datetime import datetime
 from typing import List, Optional
@@ -15,6 +16,9 @@ from src.models.batch_move_result import BatchMoveResult
 from src.services.atomic_mover import AtomicMover
 from src.services.integrity_verifier import IntegrityVerifier
 from src.services.quarantine_manager import QuarantineManager
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 class FileMover:
@@ -56,10 +60,13 @@ class FileMover:
         """
         # Validate inputs
         if not source_path.exists():
+            logger.error(f"Source file not found: {source_path}")
             raise FileNotFoundError(f"Source file not found: {source_path}")
         if source_path == destination_path:
+            logger.error(f"Source and destination are the same: {source_path}")
             raise ValueError("Source and destination cannot be the same")
 
+        logger.info(f"Starting file move: {source_path} -> {destination_path}")
         start_time = time.time()
 
         # Calculate file hash
@@ -85,6 +92,7 @@ class FileMover:
 
             if is_duplicate:
                 # Handle duplicate
+                logger.info(f"Duplicate detected for {source_path}, hash: {file_hash[:8]}...")
                 duplicate_record = self.duplicate_handler.handle_duplicate(
                     source_path, file_hash, original_file_id, metadata
                 )
@@ -92,6 +100,7 @@ class FileMover:
                 end_time = time.time()
                 execution_time_ms = (end_time - start_time) * 1000
 
+                logger.info(f"Duplicate moved to {duplicate_record.duplicate_path} in {execution_time_ms:.2f}ms")
                 operation.status = OperationStatus.COMPLETED
                 return MoveResult(
                     success=True,
@@ -115,6 +124,7 @@ class FileMover:
             operation.status = OperationStatus.COMPLETED
             operation.completed_at = datetime.now()
 
+            logger.info(f"File moved successfully: {source_path} -> {move_result.actual_destination} in {move_result.execution_time_ms:.2f}ms")
             return MoveResult(
                 success=True,
                 operation=operation,
@@ -125,6 +135,7 @@ class FileMover:
             )
         else:
             # Move failed - quarantine the file
+            logger.warning(f"File move failed for {source_path}: {move_result.error}")
             try:
                 quarantine_record = self.quarantine_manager.quarantine_file(
                     source_path, destination_path, move_result.error, metadata
@@ -134,6 +145,7 @@ class FileMover:
                 end_time = time.time()
                 execution_time_ms = (end_time - start_time) * 1000
 
+                logger.info(f"File quarantined: {quarantine_record.file_path} (reason: {quarantine_record.error_type.value})")
                 return MoveResult(
                     success=False,
                     operation=operation,
