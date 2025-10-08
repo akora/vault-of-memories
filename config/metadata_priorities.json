@@ -1,0 +1,93 @@
+{
+  "default_priority": [
+    "exif",
+    "embedded",
+    "filename",
+    "filesystem",
+    "inferred",
+    "default"
+  ],
+  "field_priorities": {
+    "capture_date": [
+      "exif",
+      "embedded",
+      "filesystem",
+      "filename",
+      "inferred",
+      "default"
+    ],
+    "creation_date": [
+      "exif",
+      "embedded",
+      "filesystem",
+      "filename",
+      "default"
+    ],
+    "device_make": [
+      "exif",
+      "embedded",
+      "inferred",
+      "default"
+    ],
+    "device_model": [
+      "exif",
+      "embedded",
+      "inferred",
+      "default"
+    ],
+    "gps_latitude": [
+      "exif",
+      "embedded",
+      "inferred",
+      "default"
+    ],
+    "gps_longitude": [
+      "exif",
+      "embedded",
+      "inferred",
+      "default"
+    ],
+    "title": [
+      "embedded",
+      "filename",
+      "exif",
+      "inferred",
+      "default"
+    ],
+    "description": [
+      "embedded",
+      "exif",
+      "filename",
+      "inferred",
+      "default"
+    ],
+    "author": [
+      "embedded",
+      "exif",
+      "default"
+    ],
+    "copyright": [
+      "embedded",
+      "exif",
+      "default"
+    ]
+  },
+  "source_reliability_weights": {
+    "exif": 1.0,
+    "embedded": 0.9,
+    "filename": 0.6,
+    "filesystem": 0.4,
+    "inferred": 0.3,
+    "default": 0.2
+  },
+  "notes": {
+    "description": "Priority rules for metadata consolidation",
+    "priority_order": "Sources are listed from highest to lowest priority",
+    "field_specific": "Some fields have custom priority orders that override the default",
+    "examples": {
+      "capture_date": "EXIF data is most reliable for photo capture dates",
+      "title": "Embedded document titles take precedence over filenames",
+      "gps_location": "Only trust EXIF and embedded GPS data, not inferred"
+    }
+  }
+}

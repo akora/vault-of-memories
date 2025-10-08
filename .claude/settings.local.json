@@ -1,9 +1,31 @@
 {
   "permissions": {
     "allow": [
-      "Bash(.specify/scripts/bash/create-new-feature.sh:*)",
+      "Bash(source:*)",
+      "Bash(python -m pytest tests/contract/test_configuration_manager.py::TestConfigurationManager::test_reload_configuration -v)",
+      "Bash(python -m pytest tests/contract/test_configuration_manager.py -v)",
+      "Bash(python -m pytest tests/contract/test_configuration_loader.py -v)",
+      "Bash(python -m pytest tests/integration/test_configuration_system.py -v)",
+      "Bash(python -m pytest tests/integration/test_configuration_system.py::TestConfigurationSystemIntegration::test_complete_configuration_workflow -v)",
+      "Bash(python -m pytest tests/integration/test_configuration_system.py::TestConfigurationSystemIntegration::test_configuration_validation_with_errors -v)",
+      "Bash(python -m pytest tests/ -k \"configuration\" -v)",
+      "Bash(python:*)",
+      "Bash(flake8:*)",
+      "Bash(find:*)",
+      "Bash(git add:*)",
+      "SlashCommand(/tasks:*)",
+      "Bash(.specify/scripts/bash/check-task-prerequisites.sh:*)",
       "Bash(git checkout:*)",
-      "Bash(git branch:*)"
+      "Bash(cat:*)",
+      "Bash(git commit:*)",
+      "SlashCommand(/implement:*)",
+      "Bash(.specify/scripts/bash/check-implementation-prerequisites.sh:*)",
+      "SlashCommand(/plan:*)",
+      "Bash(.specify/scripts/bash/setup-plan.sh:*)",
+      "WebSearch",
+      "Bash(.specify/scripts/bash/update-agent-context.sh:*)",
+      "Bash(tree:*)",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []

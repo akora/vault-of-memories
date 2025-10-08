@@ -1,0 +1,30 @@
+{
+  "_comment": "Folder structure configuration for Organization Manager",
+  "_version": "1.0.0",
+
+  "vault_layout": {
+    "date_hierarchy_format": "YYYY/YYYY-MM/YYYY-MM-DD",
+    "use_subcategories": true,
+    "max_path_length": 260
+  },
+
+  "category_folders": {
+    "photos": "photos",
+    "documents": "documents",
+    "videos": "videos",
+    "audio": "audio",
+    "archives": "archives",
+    "other": "other"
+  },
+
+  "permissions": {
+    "unix_folder_mode": "0o755",
+    "unix_file_mode": "0o644"
+  },
+
+  "reserved_folders": {
+    "duplicates": "duplicates",
+    "quarantine": "quarantine",
+    "processing": ".processing"
+  }
+}

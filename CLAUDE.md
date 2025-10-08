@@ -6,8 +6,11 @@ Auto-generated from all feature plans. Last updated: 2025-10-08
 
 **Language/Version**: Python 3.11
 **Primary Dependencies**:
-- Python standard library (argparse, logging, pathlib, signal)
+- Python standard library (argparse, logging, pathlib, signal, os, datetime, threading)
+- pathvalidate (v3.3.1+) - cross-platform filename validation
+- python-magic - MIME type detection
 - Existing vault modules (FileIngestor, MetadataConsolidator, OrganizationManager, FileMover)
+
 **Storage**: Filesystem-based vault structure
 **Testing**: pytest (contract, integration, unit tests)
 **Project Type**: Single project (CLI-based)
@@ -17,7 +20,7 @@ Auto-generated from all feature plans. Last updated: 2025-10-08
 src/
 ├── models/          # Data models (VaultPath, Classification, DateInfo, etc.)
 ├── services/        # Core services (OrganizationManager, ClassificationEngine, etc.)
-├── cli/            # NEW: Command-line interface (Feature 013)
+├── cli/            # Command-line interface (Feature 013)
 │   ├── commands/   # Command implementations (process, status, recover)
 │   └── formatters/ # Output formatting (progress, summary)
 └── lib/            # Shared utilities
@@ -80,6 +83,11 @@ vault recover [--vault-root PATH] [--quarantine-type TYPE]
 # Utility commands
 vault validate <source>  # Check files before processing
 vault help [command]     # Detailed help
+
+# Development commands
+/plan <feature-id>       # Create implementation plan
+/tasks                   # Generate task breakdown
+/implement               # Execute implementation
 ```
 
 ## Code Style

@@ -1,0 +1,39 @@
+{
+  "audio_processor": {
+    "supported_formats": [
+      ".mp3",
+      ".flac",
+      ".m4a",
+      ".mp4",
+      ".aac",
+      ".ogg",
+      ".oga",
+      ".opus",
+      ".wma",
+      ".wav",
+      ".wave"
+    ],
+    "quality_thresholds": {
+      "high_quality_kbps": 256,
+      "medium_quality_kbps": 128,
+      "lossless_formats": [
+        "FLAC",
+        "WAV",
+        "ALAC"
+      ]
+    },
+    "tag_extraction": {
+      "prefer_id3v2_over_id3v1": true,
+      "extract_cover_art": true,
+      "extract_lyrics": false,
+      "normalize_tag_names": true
+    },
+    "processing_options": {
+      "extract_waveform": false,
+      "calculate_loudness": false,
+      "detect_silence": false,
+      "skip_corrupted_files": true,
+      "log_missing_metadata": true
+    }
+  }
+}
