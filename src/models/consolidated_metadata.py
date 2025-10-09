@@ -81,6 +81,7 @@ class ConsolidatedMetadata:
     width: Optional[MetadataField] = None
     height: Optional[MetadataField] = None
     duration: Optional[MetadataField] = None
+    bitrate: Optional[MetadataField] = None  # Bitrate in kbps (audio/video)
     page_count: Optional[MetadataField] = None
     resolution_label: Optional[MetadataField] = None  # "4K", "1080p", "720p", etc.
     fps: Optional[MetadataField] = None  # Frames per second (video)
