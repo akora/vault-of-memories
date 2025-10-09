@@ -120,11 +120,9 @@ class NamingPatternEngine:
         result = re.sub(r'[-_]{2,}', '-', result)
 
         # Remove orphaned prefixes (e.g., "p-" when page_count is missing, "ir-" when resolution is missing)
-        # Match: single letter followed by hyphen at word boundaries
-        result = re.sub(r'-([a-z])-(?=[a-z0-9])', r'-', result)
-
-        # Remove orphaned prefix at the end (e.g., "-p" at end of filename)
-        result = re.sub(r'-([a-z])(?=\.[a-z]+$)', r'', result)
+        # Match: single letter or two-letter prefix followed by hyphen or at end
+        result = re.sub(r'-([a-z]{1,2})-', r'-', result)  # Middle: "-p-" or "-br-"
+        result = re.sub(r'-([a-z]{1,2})$', r'', result)   # End: "-p" or "-br"
 
         # Remove leading/trailing separators
         result = result.strip('-_')
