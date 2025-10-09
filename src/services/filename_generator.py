@@ -38,7 +38,7 @@ class FilenameGenerator:
         "image": "{date}-{time}-{device_make}-{device_model}-ir{resolution}-s{size_kb}",
         "document": "{date}-{title}-p{page_count}-s{size_kb}",
         "audio": "{date}-{artist}-{title}-br{bitrate}",
-        "video": "{date}-{time}-{resolution_label}-{category}-s{size_mb}",
+        "video": "{date_compact}-{time_compact}-{resolution_label}-{fps}p-{duration_short}-{device_model}",
         "unknown": "{date}-{checksum_short}-{size_kb}"
     }
 
@@ -243,6 +243,24 @@ class FilenameGenerator:
                     prepared[date_field] = dt_value.value
                 elif isinstance(dt_value, dict) and 'value' in dt_value:
                     prepared[date_field] = dt_value['value']
+
+        # Apply special formatting for video-specific components
+        if 'duration' in prepared and prepared['duration']:
+            prepared['duration_short'] = self.formatter.format_duration_short(prepared['duration'])
+
+        if 'fps' in prepared and prepared['fps']:
+            prepared['fps'] = self.formatter.format_fps(prepared['fps'])
+
+        if 'resolution_label' in prepared and prepared['resolution_label']:
+            prepared['resolution_label'] = self.formatter.format_resolution_label(prepared['resolution_label'])
+
+        # Format compact date/time from the date fields
+        for date_field in ["creation_date", "capture_date", "modification_date"]:
+            if date_field in prepared and prepared[date_field]:
+                if 'date_compact' not in prepared or not prepared['date_compact']:
+                    prepared['date_compact'] = self.formatter.format_date(prepared[date_field])
+                if 'time_compact' not in prepared or not prepared['time_compact']:
+                    prepared['time_compact'] = self.formatter.format_time(prepared[date_field])
 
         return prepared
 

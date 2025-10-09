@@ -36,14 +36,15 @@ class VideoProcessor:
         ".m4v", ".mpg", ".mpeg", ".flv", ".f4v"
     }
 
-    def __init__(self, config_path: Optional[Path] = None):
+    def __init__(self, config_path: Optional[Path] = None, timezone: Optional[str] = None):
         """
         Initialize video processor.
 
         Args:
             config_path: Optional path to configuration file
+            timezone: Target timezone for timestamp conversion (e.g., "Asia/Tokyo")
         """
-        self.media_extractor = MediaInfoExtractor()
+        self.media_extractor = MediaInfoExtractor(target_timezone=timezone)
         self.resolution_detector = ResolutionDetector()
         self.categorizer = ContentCategorizer(config_path)
 

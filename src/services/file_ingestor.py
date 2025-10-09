@@ -58,10 +58,32 @@ class FileIngestorImpl:
             modification_time = file_path.stat().st_mtime
             created_at = time.time()
 
-            # Calculate SHA-256 checksum
+            # Check if file path already exists in database
+            conn = self.db_manager.get_connection()
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT id, checksum, status FROM file_records WHERE file_path = ?",
+                (str(file_path),)
+            )
+            existing = cursor.fetchone()
+
+            if existing:
+                # File already processed, return existing record
+                record = FileRecord(
+                    id=existing[0],
+                    file_path=file_path,
+                    checksum=existing[1],
+                    file_size=file_size,
+                    modification_time=modification_time,
+                    created_at=created_at,
+                    status=ProcessingStatus(existing[2])
+                )
+                return record
+
+            # Calculate SHA-256 checksum for new files
             checksum = self._calculate_checksum(file_path)
 
-            # Check for duplicates
+            # Check for duplicates by checksum
             if self.is_duplicate(checksum):
                 status = ProcessingStatus.DUPLICATE
             else:
@@ -79,8 +101,6 @@ class FileIngestorImpl:
             )
 
             # Add to database
-            conn = self.db_manager.get_connection()
-            cursor = conn.cursor()
             cursor.execute("""
                 INSERT INTO file_records
                 (file_path, checksum, file_size, modification_time, created_at, status)

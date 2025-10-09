@@ -293,14 +293,59 @@ class MetadataConsolidator:
 
         # Type-specific fields for video
         elif file_type == 'video':
-            if hasattr(processor_metadata, 'duration_seconds') and processor_metadata.duration_seconds:
-                field_sources['duration'] = {source: processor_metadata.duration_seconds}
+            # Technical dimensions and duration
+            if hasattr(processor_metadata, 'duration') and processor_metadata.duration:
+                field_sources['duration'] = {source: processor_metadata.duration}
 
             if hasattr(processor_metadata, 'width') and processor_metadata.width:
                 field_sources['width'] = {source: processor_metadata.width}
 
             if hasattr(processor_metadata, 'height') and processor_metadata.height:
                 field_sources['height'] = {source: processor_metadata.height}
+
+            # Camera/device information
+            if hasattr(processor_metadata, 'camera_make') and processor_metadata.camera_make:
+                field_sources['device_make'] = {source: processor_metadata.camera_make}
+
+            if hasattr(processor_metadata, 'camera_model') and processor_metadata.camera_model:
+                field_sources['device_model'] = {source: processor_metadata.camera_model}
+
+            if hasattr(processor_metadata, 'recording_device') and processor_metadata.recording_device:
+                # Use as fallback if no camera info available
+                if 'device_make' not in field_sources and 'device_model' not in field_sources:
+                    field_sources['device_model'] = {source: processor_metadata.recording_device}
+
+            # Timestamps
+            if hasattr(processor_metadata, 'creation_date') and processor_metadata.creation_date:
+                field_sources['creation_date'] = {source: processor_metadata.creation_date}
+
+            if hasattr(processor_metadata, 'recording_date') and processor_metadata.recording_date:
+                field_sources['capture_date'] = {source: processor_metadata.recording_date}
+
+            if hasattr(processor_metadata, 'modification_date') and processor_metadata.modification_date:
+                field_sources['modification_date'] = {source: processor_metadata.modification_date}
+
+            # GPS coordinates
+            if hasattr(processor_metadata, 'gps_latitude') and processor_metadata.gps_latitude:
+                field_sources['gps_latitude'] = {source: processor_metadata.gps_latitude}
+
+            if hasattr(processor_metadata, 'gps_longitude') and processor_metadata.gps_longitude:
+                field_sources['gps_longitude'] = {source: processor_metadata.gps_longitude}
+
+            if hasattr(processor_metadata, 'gps_altitude') and processor_metadata.gps_altitude:
+                field_sources['gps_altitude'] = {source: processor_metadata.gps_altitude}
+
+            # Content categorization
+            if hasattr(processor_metadata, 'primary_category') and processor_metadata.primary_category:
+                field_sources['category'] = {source: processor_metadata.primary_category}
+
+            # Resolution label (e.g., "4K", "1080p")
+            if hasattr(processor_metadata, 'resolution_label') and processor_metadata.resolution_label:
+                field_sources['resolution_label'] = {source: processor_metadata.resolution_label}
+
+            # Frame rate (fps)
+            if hasattr(processor_metadata, 'fps') and processor_metadata.fps:
+                field_sources['fps'] = {source: processor_metadata.fps}
 
         return field_sources
 

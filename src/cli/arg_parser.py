@@ -87,6 +87,11 @@ def create_parser() -> argparse.ArgumentParser:
         action='store_true',
         help='Suppress output except errors'
     )
+    process_parser.add_argument(
+        '--timezone',
+        type=str,
+        help='Timezone for timestamp conversion (e.g., "Asia/Tokyo", "America/New_York"). If not specified, uses system timezone.'
+    )
 
     # Status command
     status_parser = subparsers.add_parser(

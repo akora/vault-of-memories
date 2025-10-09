@@ -25,6 +25,16 @@ class MediaInfoExtractor:
     - Embedded metadata (creation dates, camera info, GPS)
     """
 
+    def __init__(self, target_timezone: Optional[str] = None):
+        """
+        Initialize MediaInfoExtractor.
+
+        Args:
+            target_timezone: Target timezone for timestamp conversion (e.g., "Asia/Tokyo").
+                           If None, uses system timezone.
+        """
+        self.target_timezone = target_timezone
+
     def extract_metadata(self, file_path: Path) -> Dict[str, Any]:
         """
         Extract comprehensive metadata from video file.
@@ -174,16 +184,17 @@ class MediaInfoExtractor:
 
     def _parse_timestamp(self, timestamp_str: str) -> Optional[str]:
         """
-        Parse timestamp string to ISO format.
+        Parse timestamp string to ISO format and convert from UTC to local time.
 
         MediaInfo returns timestamps in various formats. This attempts to
-        normalize them to ISO 8601 format (YYYY-MM-DDTHH:MM:SS).
+        normalize them to ISO 8601 format (YYYY-MM-DDTHH:MM:SS) and convert
+        from UTC to local timezone.
 
         Args:
             timestamp_str: Timestamp string from MediaInfo
 
         Returns:
-            ISO formatted timestamp string, or original if parsing fails
+            ISO formatted timestamp string in local timezone, or original if parsing fails
         """
         if not timestamp_str:
             return None
@@ -193,10 +204,15 @@ class MediaInfoExtractor:
         # "2023-12-25 14:30:22.000"
 
         timestamp_str = timestamp_str.strip()
+        is_utc = False
 
-        # Remove "UTC " prefix if present
+        # Check if timestamp is explicitly marked as UTC (can be at start or end)
         if timestamp_str.startswith("UTC "):
             timestamp_str = timestamp_str[4:]
+            is_utc = True
+        elif timestamp_str.endswith(" UTC"):
+            timestamp_str = timestamp_str[:-4]
+            is_utc = True
 
         # Split on space to separate date and time
         parts = timestamp_str.split()
@@ -208,8 +224,59 @@ class MediaInfoExtractor:
             if "." in time_part:
                 time_part = time_part.split(".")[0]
 
-            # Return ISO format
-            return f"{date_part}T{time_part}"
+            # Create ISO format timestamp
+            iso_timestamp = f"{date_part}T{time_part}"
+
+            # Convert from UTC to target timezone if needed
+            if is_utc:
+                try:
+                    from datetime import datetime
+                    import time
+                    import calendar
+
+                    # Parse the UTC timestamp
+                    dt_utc = datetime.fromisoformat(iso_timestamp)
+
+                    # Get UTC timestamp as epoch seconds
+                    utc_seconds = calendar.timegm(dt_utc.timetuple())
+
+                    if self.target_timezone:
+                        # Convert to specified timezone using zoneinfo (Python 3.9+)
+                        try:
+                            from zoneinfo import ZoneInfo
+                            from datetime import timezone
+
+                            # Create timezone-aware UTC datetime
+                            dt_utc_aware = dt_utc.replace(tzinfo=timezone.utc)
+
+                            # Convert to target timezone
+                            target_tz = ZoneInfo(self.target_timezone)
+                            dt_target = dt_utc_aware.astimezone(target_tz)
+
+                            return dt_target.strftime("%Y-%m-%dT%H:%M:%S")
+                        except ImportError:
+                            # Fallback for Python < 3.9: use system timezone
+                            logger.warning(f"zoneinfo not available, falling back to system timezone")
+                            local_time = time.localtime(utc_seconds)
+                            dt_local = datetime(*local_time[:6])
+                            return dt_local.strftime("%Y-%m-%dT%H:%M:%S")
+                        except Exception as e:
+                            logger.warning(f"Failed to convert to timezone '{self.target_timezone}': {e}")
+                            # Fall back to system timezone
+                            local_time = time.localtime(utc_seconds)
+                            dt_local = datetime(*local_time[:6])
+                            return dt_local.strftime("%Y-%m-%dT%H:%M:%S")
+                    else:
+                        # Use system timezone
+                        local_time = time.localtime(utc_seconds)
+                        dt_local = datetime(*local_time[:6])
+                        return dt_local.strftime("%Y-%m-%dT%H:%M:%S")
+
+                except Exception as e:
+                    logger.debug(f"Failed to convert UTC timestamp '{timestamp_str}': {e}")
+                    return iso_timestamp
+
+            return iso_timestamp
 
         return timestamp_str  # Return as-is if we can't parse it
 

@@ -26,7 +26,9 @@ class NamingPatternEngine:
     COMPONENT_FORMATTERS = {
         # Date/Time components
         "date": lambda m: m.get("creation_date", m.get("capture_date", m.get("modification_date"))),
+        "date_compact": lambda m: m.get("date_compact"),  # Pre-formatted by FilenameGenerator
         "time": lambda m: m.get("creation_time", m.get("capture_time")),
+        "time_compact": lambda m: m.get("time_compact"),  # Pre-formatted by FilenameGenerator
         "year": lambda m: m.get("year"),
         "month": lambda m: m.get("month"),
         "day": lambda m: m.get("day"),
@@ -54,8 +56,9 @@ class NamingPatternEngine:
 
         # Audio/Video components
         "duration": lambda m: int(m.get("duration", 0)) if m.get("duration") else None,
+        "duration_short": lambda m: m.get("duration_short"),  # Pre-formatted by FilenameGenerator
         "bitrate": lambda m: m.get("bitrate"),
-        "fps": lambda m: int(m.get("fps", 0)) if m.get("fps") else None,
+        "fps": lambda m: m.get("fps"),  # Pre-formatted by FilenameGenerator (already an integer)
         "page_count": lambda m: m.get("page_count"),
 
         # Checksum

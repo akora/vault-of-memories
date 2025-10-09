@@ -82,6 +82,8 @@ class ConsolidatedMetadata:
     height: Optional[MetadataField] = None
     duration: Optional[MetadataField] = None
     page_count: Optional[MetadataField] = None
+    resolution_label: Optional[MetadataField] = None  # "4K", "1080p", "720p", etc.
+    fps: Optional[MetadataField] = None  # Frames per second (video)
 
     # Quality assessment
     quality_score: Optional[float] = None  # Overall metadata quality (0.0-1.0)

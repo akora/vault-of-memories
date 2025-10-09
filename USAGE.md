@@ -156,6 +156,7 @@ python3 -m src.cli.main --vault-root ~/vault --workers 4 process ~/Downloads
 --dry-run              # Preview without making changes
 --verbose              # Show detailed progress information
 --quiet                # Suppress non-error output
+--timezone TIMEZONE    # Timezone for timestamp conversion (e.g., "Asia/Tokyo", "America/New_York")
 ```
 
 ### Status Command
@@ -283,6 +284,18 @@ The system generates intelligent filenames based on metadata:
 │          │      └─ Camera make
 │          └─ Time (HHMMSS)
 └─ Date (YYYY-MM-DD)
+```
+
+### Videos (with metadata)
+```
+20251005-141449-DJI-Mavic3Pro-4K-60p-45s.mp4
+│        │      │            │  │   │
+│        │      │            │  │   └─ Duration (seconds)
+│        │      │            │  └─ Frame rate (fps)
+│        │      │            └─ Resolution label
+│        │      └─ Device/camera model
+│        └─ Time (HHMMSS)
+└─ Date (YYYYMMDD, in local timezone)
 ```
 
 ### Documents (with metadata)
@@ -460,6 +473,21 @@ python3 -m src.cli.main --vault-root ~/Photos/vault process /Volumes/SD_CARD/DCI
 ```
 
 Result: Photos organized by date with camera info in filenames.
+
+### Travel videographer with timezone considerations
+
+```bash
+# Videos recorded in Tokyo (specify timezone for correct local time)
+python3 -m src.cli.main --vault-root ~/Videos/vault process /Volumes/SD_CARD --timezone "Asia/Tokyo"
+
+# Videos recorded in New York
+python3 -m src.cli.main --vault-root ~/Videos/vault process /Volumes/DRONE_SD --timezone "America/New_York"
+
+# Local videos (use system timezone - no flag needed)
+python3 -m src.cli.main --vault-root ~/Videos/vault process ~/Downloads/Videos
+```
+
+Result: Videos show correct local recording time in filenames, with device info (e.g., DJI-Mavic3Pro), resolution (4K), and frame rate (60p).
 
 ### Archiving documents
 

@@ -42,6 +42,7 @@ class CommandOptions:
     batch_size: int = 100
     force: bool = False
     quarantine_type: Optional[str] = None
+    timezone: Optional[str] = None  # e.g., "Asia/Tokyo", "America/New_York"
 
     def __post_init__(self):
         """Validate and set defaults."""
@@ -82,5 +83,6 @@ class CommandOptions:
             workers=getattr(args, 'workers', 1),
             batch_size=getattr(args, 'batch_size', 100),
             force=getattr(args, 'force', False),
-            quarantine_type=getattr(args, 'quarantine_type', None)
+            quarantine_type=getattr(args, 'quarantine_type', None),
+            timezone=getattr(args, 'timezone', None)
         )

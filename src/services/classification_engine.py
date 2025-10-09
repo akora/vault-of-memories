@@ -17,15 +17,24 @@ class ClassificationEngine:
 
     # MIME type to category mapping
     MIME_TO_CATEGORY = {
-        # Photos
+        # Photos - Processed
         'image/jpeg': ('photos', 'processed'),
         'image/png': ('photos', 'processed'),
         'image/gif': ('photos', 'processed'),
         'image/webp': ('photos', 'processed'),
         'image/heic': ('photos', 'processed'),
+        'image/heif': ('photos', 'processed'),
+
+        # Photos - Raw
         'image/x-canon-cr2': ('photos', 'raw'),
+        'image/x-canon-cr3': ('photos', 'raw'),
         'image/x-nikon-nef': ('photos', 'raw'),
         'image/x-sony-arw': ('photos', 'raw'),
+        'image/x-adobe-dng': ('photos', 'raw'),
+        'image/x-olympus-orf': ('photos', 'raw'),
+        'image/x-panasonic-rw2': ('photos', 'raw'),
+        'image/x-fuji-raf': ('photos', 'raw'),
+        'image/x-pentax-pef': ('photos', 'raw'),
 
         # Documents
         'application/pdf': ('documents', 'pdf'),

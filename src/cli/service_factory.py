@@ -28,12 +28,13 @@ class ServiceFactory:
     """Factory for creating configured service instances."""
 
     @staticmethod
-    def create_pipeline_orchestrator(vault_root: Path) -> PipelineOrchestrator:
+    def create_pipeline_orchestrator(vault_root: Path, timezone: str = None) -> PipelineOrchestrator:
         """
         Create a fully configured PipelineOrchestrator.
 
         Args:
             vault_root: Vault root directory path
+            timezone: Target timezone for timestamp conversion (e.g., "Asia/Tokyo")
 
         Returns:
             Configured PipelineOrchestrator instance
@@ -57,7 +58,7 @@ class ServiceFactory:
         metadata_consolidator.register_processor('image', ImageProcessorImpl())
         metadata_consolidator.register_processor('document', DocumentProcessorImpl())
         metadata_consolidator.register_processor('audio', AudioProcessorImpl())
-        metadata_consolidator.register_processor('video', VideoProcessor())
+        metadata_consolidator.register_processor('video', VideoProcessor(timezone=timezone))
 
         # Create organization manager
         organization_manager = OrganizationManager(vault_root)

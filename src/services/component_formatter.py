@@ -178,3 +178,75 @@ class ComponentFormatter:
         end_len = remaining - start_len
 
         return value[:start_len] + ellipsis + value[-end_len:] if end_len > 0 else value[:start_len] + ellipsis
+
+    def format_duration_short(self, duration_seconds: float) -> str:
+        """
+        Format duration for compact filename use (e.g., "45s", "2m30s").
+
+        Args:
+            duration_seconds: Duration in seconds
+
+        Returns:
+            Formatted duration string
+        """
+        if not duration_seconds:
+            return ""
+
+        duration = int(duration_seconds)
+
+        if duration < 60:
+            return f"{duration}s"
+        elif duration < 3600:
+            minutes = duration // 60
+            seconds = duration % 60
+            return f"{minutes}m{seconds}s" if seconds > 0 else f"{minutes}m"
+        else:
+            hours = duration // 3600
+            minutes = (duration % 3600) // 60
+            return f"{hours}h{minutes}m" if minutes > 0 else f"{hours}h"
+
+    def format_resolution_label(self, label: str) -> str:
+        """
+        Clean up resolution label for compact filename use.
+
+        Converts "Custom 4096x2160" → "4K"
+        Converts "1080p" → "1080p" (unchanged)
+
+        Args:
+            label: Resolution label from video processor
+
+        Returns:
+            Clean resolution label
+        """
+        if not label:
+            return ""
+
+        # Remove "Custom " prefix
+        if label.startswith("Custom "):
+            label = label[7:]
+
+        # Convert specific resolutions to standard labels
+        resolution_map = {
+            "3840x2160": "4K",
+            "4096x2160": "4K",
+            "1920x1080": "1080p",
+            "1280x720": "720p",
+            "2560x1440": "1440p",
+            "7680x4320": "8K"
+        }
+
+        return resolution_map.get(label, label)
+
+    def format_fps(self, fps: float) -> str:
+        """
+        Format frame rate for filename use (e.g., "60", "30", "24").
+
+        Args:
+            fps: Frames per second
+
+        Returns:
+            Integer fps string
+        """
+        if not fps:
+            return ""
+        return str(int(round(fps)))

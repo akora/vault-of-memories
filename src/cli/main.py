@@ -78,7 +78,8 @@ def create_command_options(args) -> CommandOptions:
         workers=args.workers,
         batch_size=args.batch_size,
         quarantine_type=getattr(args, 'quarantine_type', None),
-        force=getattr(args, 'force', False)
+        force=getattr(args, 'force', False),
+        timezone=getattr(args, 'timezone', None)
     )
 
 
@@ -112,7 +113,10 @@ def execute_command(options: CommandOptions) -> int:
             return 2
 
         # Create services after validation passes
-        orchestrator = ServiceFactory.create_pipeline_orchestrator(options.vault_root)
+        orchestrator = ServiceFactory.create_pipeline_orchestrator(
+            options.vault_root,
+            timezone=options.timezone
+        )
         progress_monitor = ServiceFactory.create_progress_monitor()
         command.orchestrator = orchestrator
         command.progress_monitor = progress_monitor
@@ -124,7 +128,10 @@ def execute_command(options: CommandOptions) -> int:
         return command.execute(options)
 
     elif options.command == 'recover':
-        orchestrator = ServiceFactory.create_pipeline_orchestrator(options.vault_root)
+        orchestrator = ServiceFactory.create_pipeline_orchestrator(
+            options.vault_root,
+            timezone=options.timezone
+        )
         progress_monitor = ServiceFactory.create_progress_monitor()
         command = RecoverCommand(
             orchestrator=orchestrator,
