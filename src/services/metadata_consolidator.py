@@ -329,8 +329,11 @@ class MetadataConsolidator:
             if hasattr(processor_metadata, 'album') and processor_metadata.album:
                 field_sources['album'] = {source: processor_metadata.album}
 
-            if hasattr(processor_metadata, 'duration_seconds') and processor_metadata.duration_seconds:
-                field_sources['duration'] = {source: processor_metadata.duration_seconds}
+            if hasattr(processor_metadata, 'duration') and processor_metadata.duration:
+                field_sources['duration'] = {source: processor_metadata.duration}
+
+            if hasattr(processor_metadata, 'bitrate') and processor_metadata.bitrate:
+                field_sources['bitrate'] = {source: processor_metadata.bitrate}
 
         # Type-specific fields for video
         elif file_type == 'video':

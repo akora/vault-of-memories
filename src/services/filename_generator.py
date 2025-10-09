@@ -37,7 +37,7 @@ class FilenameGenerator:
     DEFAULT_PATTERNS = {
         "image": "{date_compact}-{time_compact}-{device_make}-{device_model}-ir{resolution}-{size_kb}kb",
         "document": "{date}-{time}-{title}-p{page_count}-{size_kb}kb",
-        "audio": "{date}-{artist}-{title}-br{bitrate}",
+        "audio": "{date}-{time}-{artist}-{title}-{duration_short}-br{bitrate}",
         "video": "{date_compact}-{time_compact}-{resolution_label}-{fps}p-{duration_short}-{device_make}-{device_model}",
         "unknown": "{date}-{checksum_short}-{size_kb}kb"
     }

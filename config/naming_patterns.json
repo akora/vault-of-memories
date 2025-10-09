@@ -28,15 +28,17 @@
       "example": "20240315-143022-quarterly-report-p24-512kb.pdf"
     },
     "audio": {
-      "default": "{date}-{artist}-{title}-br{bitrate}",
+      "default": "{date}-{time}-{artist}-{title}-{duration_short}-br{bitrate}",
       "description": "Pattern for audio files (MP3, FLAC, WAV)",
       "components": [
         "date",
+        "time",
         "artist",
         "title",
+        "duration_short",
         "bitrate"
       ],
-      "example": "20240315-beethoven-symphony-no-5-br320.mp3"
+      "example": "20240315-143022-beethoven-symphony-no-5-5m30s-br320.mp3"
     },
     "video": {
       "default": "{date}-{time}-{resolution_label}-{category}-{size_mb}mb",
