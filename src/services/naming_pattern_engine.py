@@ -46,7 +46,7 @@ class NamingPatternEngine:
 
         # Size components
         "size_bytes": lambda m: m.get("file_size"),
-        "size_kb": lambda m: int(m.get("file_size", 0) / 1024) if m.get("file_size") else None,
+        "size_kb": lambda m: max(1, int(m.get("file_size", 0) / 1024)) if m.get("file_size") else None,
         "size_mb": lambda m: int(m.get("file_size", 0) / (1024 * 1024)) if m.get("file_size") else None,
 
         # Content components
@@ -101,6 +101,11 @@ class NamingPatternEngine:
             # Get value from metadata
             value = formatter(metadata)
 
+            # Treat 0 as missing for certain optional fields
+            # Note: size_kb now has min value of 1, so 0 won't occur
+            if value == 0 and placeholder in ['page_count']:
+                value = None
+
             if value is None:
                 # Remove placeholder if no value available
                 result = result.replace(f"{{{placeholder}}}", "")
@@ -113,6 +118,13 @@ class NamingPatternEngine:
 
         # Clean up multiple consecutive separators
         result = re.sub(r'[-_]{2,}', '-', result)
+
+        # Remove orphaned prefixes (e.g., "p-" when page_count is missing, "ir-" when resolution is missing)
+        # Match: single letter followed by hyphen at word boundaries
+        result = re.sub(r'-([a-z])-(?=[a-z0-9])', r'-', result)
+
+        # Remove orphaned prefix at the end (e.g., "-p" at end of filename)
+        result = re.sub(r'-([a-z])(?=\.[a-z]+$)', r'', result)
 
         # Remove leading/trailing separators
         result = result.strip('-_')
