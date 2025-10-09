@@ -259,8 +259,21 @@ class MetadataConsolidator:
                 props = processor_metadata.properties
                 if hasattr(props, 'title') and props.title:
                     field_sources['title'] = {source: props.title}
-                if hasattr(props, 'page_count') and props.page_count:
-                    field_sources['page_count'] = {source: props.page_count}
+
+            # PDF-specific properties
+            if hasattr(processor_metadata, 'pdf_properties') and processor_metadata.pdf_properties:
+                pdf_props = processor_metadata.pdf_properties
+                if hasattr(pdf_props, 'page_count') and pdf_props.page_count:
+                    field_sources['page_count'] = {source: pdf_props.page_count}
+
+            # Office document properties (Word, PowerPoint, etc.)
+            if hasattr(processor_metadata, 'office_properties') and processor_metadata.office_properties:
+                office_props = processor_metadata.office_properties
+                if hasattr(office_props, 'page_count') and office_props.page_count:
+                    field_sources['page_count'] = {source: office_props.page_count}
+                elif hasattr(office_props, 'slide_count') and office_props.slide_count:
+                    # For PowerPoint, slide_count is equivalent to page_count
+                    field_sources['page_count'] = {source: office_props.slide_count}
 
             # Author info
             if hasattr(processor_metadata, 'author_info') and processor_metadata.author_info:
