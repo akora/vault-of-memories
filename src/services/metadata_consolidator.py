@@ -152,7 +152,12 @@ class MetadataConsolidator:
         ext = file_path.suffix.lower()
 
         # Map extensions to file types
-        image_exts = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".tiff", ".bmp", ".heic"}
+        image_exts = {
+            # Standard formats
+            ".jpg", ".jpeg", ".png", ".gif", ".webp", ".tiff", ".bmp", ".heic", ".heif",
+            # Raw formats
+            ".nef", ".cr2", ".cr3", ".arw", ".dng", ".orf", ".rw2", ".raf", ".pef"
+        }
         doc_exts = {".pdf", ".doc", ".docx", ".odt", ".txt", ".rtf"}
         audio_exts = {".mp3", ".flac", ".m4a", ".ogg", ".wma", ".wav"}
         video_exts = {".mp4", ".avi", ".mov", ".mkv", ".wmv", ".webm"}
@@ -265,20 +270,43 @@ class MetadataConsolidator:
 
         # Type-specific fields for images
         if file_type == 'image':
-            if hasattr(processor_metadata, 'camera_make') and processor_metadata.camera_make:
-                field_sources['device_make'] = {source: processor_metadata.camera_make}
+            # Camera info (nested in camera object)
+            if hasattr(processor_metadata, 'camera') and processor_metadata.camera:
+                camera = processor_metadata.camera
+                if hasattr(camera, 'make') and camera.make:
+                    field_sources['device_make'] = {source: camera.make}
+                if hasattr(camera, 'model') and camera.model:
+                    field_sources['device_model'] = {source: camera.model}
 
-            if hasattr(processor_metadata, 'camera_model') and processor_metadata.camera_model:
-                field_sources['device_model'] = {source: processor_metadata.camera_model}
+            # Timestamps (nested in timestamps object)
+            if hasattr(processor_metadata, 'timestamps') and processor_metadata.timestamps:
+                timestamps = processor_metadata.timestamps
+                # Try different timestamp fields
+                capture_time = (
+                    getattr(timestamps, 'date_time_original', None) or
+                    getattr(timestamps, 'create_date', None) or
+                    getattr(timestamps, 'capture', None)
+                )
+                if capture_time:
+                    field_sources['capture_date'] = {source: capture_time}
 
-            if hasattr(processor_metadata, 'capture_timestamp') and processor_metadata.capture_timestamp:
-                field_sources['capture_date'] = {source: processor_metadata.capture_timestamp}
+            # Dimensions (nested in dimensions object)
+            if hasattr(processor_metadata, 'dimensions') and processor_metadata.dimensions:
+                dims = processor_metadata.dimensions
+                if hasattr(dims, 'width') and dims.width:
+                    field_sources['width'] = {source: dims.width}
+                if hasattr(dims, 'height') and dims.height:
+                    field_sources['height'] = {source: dims.height}
 
-            if hasattr(processor_metadata, 'width') and processor_metadata.width:
-                field_sources['width'] = {source: processor_metadata.width}
-
-            if hasattr(processor_metadata, 'height') and processor_metadata.height:
-                field_sources['height'] = {source: processor_metadata.height}
+            # GPS (nested in gps object)
+            if hasattr(processor_metadata, 'gps') and processor_metadata.gps:
+                gps = processor_metadata.gps
+                if hasattr(gps, 'latitude') and gps.latitude is not None:
+                    field_sources['gps_latitude'] = {source: gps.latitude}
+                if hasattr(gps, 'longitude') and gps.longitude is not None:
+                    field_sources['gps_longitude'] = {source: gps.longitude}
+                if hasattr(gps, 'altitude') and gps.altitude is not None:
+                    field_sources['gps_altitude'] = {source: gps.altitude}
 
         # Type-specific fields for audio
         elif file_type == 'audio':

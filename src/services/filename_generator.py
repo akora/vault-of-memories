@@ -35,7 +35,7 @@ class FilenameGenerator:
 
     # Default naming patterns by file type
     DEFAULT_PATTERNS = {
-        "image": "{date}-{time}-{device_make}-{device_model}-ir{resolution}-s{size_kb}",
+        "image": "{date_compact}-{time_compact}-{device_make}-{device_model}-ir{resolution}-s{size_kb}",
         "document": "{date}-{title}-p{page_count}-s{size_kb}",
         "audio": "{date}-{artist}-{title}-br{bitrate}",
         "video": "{date_compact}-{time_compact}-{resolution_label}-{fps}p-{duration_short}-{device_make}-{device_model}",

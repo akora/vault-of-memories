@@ -25,7 +25,12 @@
       "WebSearch",
       "Bash(.specify/scripts/bash/update-agent-context.sh:*)",
       "Bash(tree:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(done)",
+      "Read(//Volumes/ExternalSSD/Vault/**)",
+      "Read(//Volumes/ExternalSSD/Temp/_inbox/**)"
     ],
     "deny": [],
     "ask": []
