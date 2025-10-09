@@ -7,7 +7,7 @@ The Vault of Memories CLI processes your files into an organized vault structure
 ## Command Syntax
 
 ```bash
-python3 -m src.cli.main [GLOBAL_OPTIONS] COMMAND [COMMAND_OPTIONS]
+python3 -m src.cli [GLOBAL_OPTIONS] COMMAND [COMMAND_OPTIONS]
 ```
 
 **Important:** Global options (like `--vault-root`) must come **before** the command name.
@@ -22,19 +22,19 @@ Process files from a source directory into your vault.
 
 ```bash
 # Basic usage
-python3 -m src.cli.main --vault-root ~/vault process ~/Downloads
+python3 -m src.cli --vault-root ~/vault process ~/Downloads
 
 # Process a single file
-python3 -m src.cli.main --vault-root ~/vault process ~/Documents/report.pdf
+python3 -m src.cli --vault-root ~/vault process ~/Documents/report.pdf
 
 # Process with dry-run (preview without moving files)
-python3 -m src.cli.main --vault-root ~/vault process ~/Downloads --dry-run
+python3 -m src.cli --vault-root ~/vault process ~/Downloads --dry-run
 
 # Process with verbose output
-python3 -m src.cli.main --vault-root ~/vault process ~/Downloads --verbose
+python3 -m src.cli --vault-root ~/vault process ~/Downloads --verbose
 
 # Combine options
-python3 -m src.cli.main --vault-root ~/vault process ~/Downloads --dry-run --verbose
+python3 -m src.cli --vault-root ~/vault process ~/Downloads --dry-run --verbose
 ```
 
 **What it does:**
@@ -55,10 +55,10 @@ Display vault statistics and health information.
 
 ```bash
 # Check vault status
-python3 -m src.cli.main --vault-root ~/vault status
+python3 -m src.cli --vault-root ~/vault status
 
 # With verbose details
-python3 -m src.cli.main --vault-root ~/vault status --verbose
+python3 -m src.cli --vault-root ~/vault status --verbose
 ```
 
 **Output includes:**
@@ -75,10 +75,10 @@ Pre-validate files before processing (dry-run on steroids).
 
 ```bash
 # Validate a directory
-python3 -m src.cli.main validate ~/Downloads
+python3 -m src.cli validate ~/Downloads
 
 # Validate a single file
-python3 -m src.cli.main validate ~/Documents/report.pdf
+python3 -m src.cli validate ~/Documents/report.pdf
 ```
 
 **What it does:**
@@ -96,13 +96,13 @@ Reprocess files that were quarantined during previous runs.
 
 ```bash
 # Recover all quarantined files
-python3 -m src.cli.main --vault-root ~/vault recover
+python3 -m src.cli --vault-root ~/vault recover
 
 # Recover specific quarantine type
-python3 -m src.cli.main --vault-root ~/vault recover --quarantine-type corruption
+python3 -m src.cli --vault-root ~/vault recover --quarantine-type corruption
 
 # With verbose output
-python3 -m src.cli.main --vault-root ~/vault recover --verbose
+python3 -m src.cli --vault-root ~/vault recover --verbose
 ```
 
 **Quarantine types:**
@@ -134,16 +134,16 @@ Available for all commands (must come **before** the command name):
 
 ```bash
 # Use custom vault location
-python3 -m src.cli.main --vault-root /Volumes/Archive/vault process ~/Downloads
+python3 -m src.cli --vault-root /Volumes/Archive/vault process ~/Downloads
 
 # Save logs to file
-python3 -m src.cli.main --vault-root ~/vault --log-file processing.log process ~/Downloads
+python3 -m src.cli --vault-root ~/vault --log-file processing.log process ~/Downloads
 
 # Use custom config
-python3 -m src.cli.main --config my-config.json --vault-root ~/vault process ~/Downloads
+python3 -m src.cli --config my-config.json --vault-root ~/vault process ~/Downloads
 
 # Process with multiple workers (faster for large batches)
-python3 -m src.cli.main --vault-root ~/vault --workers 4 process ~/Downloads
+python3 -m src.cli --vault-root ~/vault --workers 4 process ~/Downloads
 ```
 
 ---
@@ -187,44 +187,44 @@ python3 -m src.cli.main --vault-root ~/vault --workers 4 process ~/Downloads
 
 ```bash
 # 1. Validate your files first
-python3 -m src.cli.main validate ~/Downloads
+python3 -m src.cli validate ~/Downloads
 
 # 2. Do a dry-run to see what would happen
-python3 -m src.cli.main --vault-root ~/vault process ~/Downloads --dry-run
+python3 -m src.cli --vault-root ~/vault process ~/Downloads --dry-run
 
 # 3. Process for real
-python3 -m src.cli.main --vault-root ~/vault process ~/Downloads
+python3 -m src.cli --vault-root ~/vault process ~/Downloads
 
 # 4. Check vault status
-python3 -m src.cli.main --vault-root ~/vault status
+python3 -m src.cli --vault-root ~/vault status
 ```
 
 ### Regular Maintenance
 
 ```bash
 # Process new files
-python3 -m src.cli.main --vault-root ~/vault process ~/Downloads
+python3 -m src.cli --vault-root ~/vault process ~/Downloads
 
 # Check for quarantined files
-python3 -m src.cli.main --vault-root ~/vault status
+python3 -m src.cli --vault-root ~/vault status
 
 # Recover quarantined files if any
-python3 -m src.cli.main --vault-root ~/vault recover
+python3 -m src.cli --vault-root ~/vault recover
 ```
 
 ### Bulk Processing
 
 ```bash
 # Process multiple sources one by one
-python3 -m src.cli.main --vault-root ~/vault process ~/Downloads
-python3 -m src.cli.main --vault-root ~/vault process ~/Desktop
-python3 -m src.cli.main --vault-root ~/vault process ~/Documents
+python3 -m src.cli --vault-root ~/vault process ~/Downloads
+python3 -m src.cli --vault-root ~/vault process ~/Desktop
+python3 -m src.cli --vault-root ~/vault process ~/Documents
 
 # Or create a script
 #!/bin/bash
 VAULT=~/vault
 for dir in ~/Downloads ~/Desktop ~/Documents; do
-    python3 -m src.cli.main --vault-root $VAULT process "$dir"
+    python3 -m src.cli --vault-root $VAULT process "$dir"
 done
 ```
 
@@ -384,10 +384,10 @@ original-filename.txt
 Make sure paths are absolute or use `~` for home directory:
 ```bash
 # Good
-python3 -m src.cli.main --vault-root ~/vault process ~/Downloads
+python3 -m src.cli --vault-root ~/vault process ~/Downloads
 
 # Bad (relative paths may not work)
-python3 -m src.cli.main --vault-root ./vault process ./Downloads
+python3 -m src.cli --vault-root ./vault process ./Downloads
 ```
 
 ### "Permission denied"
@@ -410,12 +410,12 @@ ls -la ~/vault/duplicates/
 ### Quarantined files
 Check what went wrong:
 ```bash
-python3 -m src.cli.main --vault-root ~/vault status --verbose
+python3 -m src.cli --vault-root ~/vault status --verbose
 ```
 
 Then recover if safe:
 ```bash
-python3 -m src.cli.main --vault-root ~/vault recover
+python3 -m src.cli --vault-root ~/vault recover
 ```
 
 ---
@@ -425,7 +425,7 @@ python3 -m src.cli.main --vault-root ~/vault recover
 For easier use, add this to your `~/.zshrc` or `~/.bashrc`:
 
 ```bash
-alias vault='python3 -m src.cli.main'
+alias vault='python3 -m src.cli'
 ```
 
 Then reload your shell:
@@ -446,13 +446,13 @@ vault validate ~/Downloads
 
 ```bash
 # General help
-python3 -m src.cli.main --help
+python3 -m src.cli --help
 
 # Command-specific help
-python3 -m src.cli.main process --help
-python3 -m src.cli.main status --help
-python3 -m src.cli.main validate --help
-python3 -m src.cli.main recover --help
+python3 -m src.cli process --help
+python3 -m src.cli status --help
+python3 -m src.cli validate --help
+python3 -m src.cli recover --help
 ```
 
 ---
@@ -463,13 +463,13 @@ python3 -m src.cli.main recover --help
 
 ```bash
 # Validate camera card
-python3 -m src.cli.main validate /Volumes/SD_CARD/DCIM
+python3 -m src.cli validate /Volumes/SD_CARD/DCIM
 
 # Process with dry-run
-python3 -m src.cli.main --vault-root ~/Photos/vault process /Volumes/SD_CARD/DCIM --dry-run
+python3 -m src.cli --vault-root ~/Photos/vault process /Volumes/SD_CARD/DCIM --dry-run
 
 # Process for real
-python3 -m src.cli.main --vault-root ~/Photos/vault process /Volumes/SD_CARD/DCIM
+python3 -m src.cli --vault-root ~/Photos/vault process /Volumes/SD_CARD/DCIM
 ```
 
 Result: Photos organized by date with camera info in filenames.
@@ -478,13 +478,13 @@ Result: Photos organized by date with camera info in filenames.
 
 ```bash
 # Videos recorded in Tokyo (specify timezone for correct local time)
-python3 -m src.cli.main --vault-root ~/Videos/vault process /Volumes/SD_CARD --timezone "Asia/Tokyo"
+python3 -m src.cli --vault-root ~/Videos/vault process /Volumes/SD_CARD --timezone "Asia/Tokyo"
 
 # Videos recorded in New York
-python3 -m src.cli.main --vault-root ~/Videos/vault process /Volumes/DRONE_SD --timezone "America/New_York"
+python3 -m src.cli --vault-root ~/Videos/vault process /Volumes/DRONE_SD --timezone "America/New_York"
 
 # Local videos (use system timezone - no flag needed)
-python3 -m src.cli.main --vault-root ~/Videos/vault process ~/Downloads/Videos
+python3 -m src.cli --vault-root ~/Videos/vault process ~/Downloads/Videos
 ```
 
 Result: Videos show correct local recording time in filenames, with device info (e.g., DJI-Mavic3Pro), resolution (4K), and frame rate (60p).
@@ -493,10 +493,10 @@ Result: Videos show correct local recording time in filenames, with device info 
 
 ```bash
 # Process documents folder
-python3 -m src.cli.main --vault-root ~/Archive/vault process ~/Documents
+python3 -m src.cli --vault-root ~/Archive/vault process ~/Documents
 
 # Check status
-python3 -m src.cli.main --vault-root ~/Archive/vault status
+python3 -m src.cli --vault-root ~/Archive/vault status
 ```
 
 Result: Documents organized by type (PDF, Office) and date with page count in filenames.
@@ -505,10 +505,10 @@ Result: Documents organized by type (PDF, Office) and date with page count in fi
 
 ```bash
 # Process music folder
-python3 -m src.cli.main --vault-root ~/Music/vault process ~/Downloads/Music --verbose
+python3 -m src.cli --vault-root ~/Music/vault process ~/Downloads/Music --verbose
 
 # Verify results
-python3 -m src.cli.main --vault-root ~/Music/vault status
+python3 -m src.cli --vault-root ~/Music/vault status
 ```
 
 Result: Audio files organized by date with artist, album, bitrate in filenames.
@@ -517,13 +517,13 @@ Result: Audio files organized by date with artist, album, bitrate in filenames.
 
 ```bash
 # See what's in there
-python3 -m src.cli.main validate ~/Downloads
+python3 -m src.cli validate ~/Downloads
 
 # Process everything
-python3 -m src.cli.main --vault-root ~/vault process ~/Downloads
+python3 -m src.cli --vault-root ~/vault process ~/Downloads
 
 # Check for issues
-python3 -m src.cli.main --vault-root ~/vault status --verbose
+python3 -m src.cli --vault-root ~/vault status --verbose
 ```
 
 Result: All files categorized and organized, duplicates caught, system files removed.
@@ -547,14 +547,14 @@ Create a `vault-config.json`:
 
 Use it:
 ```bash
-python3 -m src.cli.main --config vault-config.json --vault-root ~/vault process ~/Downloads
+python3 -m src.cli --config vault-config.json --vault-root ~/vault process ~/Downloads
 ```
 
 ### Processing with logs
 
 ```bash
 # Save detailed logs
-python3 -m src.cli.main --vault-root ~/vault --log-file vault-$(date +%Y%m%d).log process ~/Downloads --verbose
+python3 -m src.cli --vault-root ~/vault --log-file vault-$(date +%Y%m%d).log process ~/Downloads --verbose
 
 # Review logs later
 tail -f vault-20251008.log
@@ -565,7 +565,7 @@ tail -f vault-20251008.log
 Add to crontab:
 ```bash
 # Process Downloads daily at 2 AM
-0 2 * * * cd /Users/yourusername/vault-of-memories && python3 -m src.cli.main --vault-root ~/vault --log-file ~/vault-logs/daily-$(date +\%Y\%m\%d).log process ~/Downloads
+0 2 * * * cd /Users/yourusername/vault-of-memories && python3 -m src.cli --vault-root ~/vault --log-file ~/vault-logs/daily-$(date +\%Y\%m\%d).log process ~/Downloads
 ```
 
 ---
