@@ -25,9 +25,9 @@ class NamingPatternEngine:
     # Available pattern components with formatting rules
     COMPONENT_FORMATTERS = {
         # Date/Time components
-        "date": lambda m: m.get("creation_date", m.get("capture_date", m.get("modification_date"))),
+        "date": lambda m: m.get("date_compact"),  # Use pre-formatted compact date (YYYYMMDD)
         "date_compact": lambda m: m.get("date_compact"),  # Pre-formatted by FilenameGenerator
-        "time": lambda m: m.get("creation_time", m.get("capture_time")),
+        "time": lambda m: m.get("time_compact"),  # Use pre-formatted compact time (HHMMSS)
         "time_compact": lambda m: m.get("time_compact"),  # Pre-formatted by FilenameGenerator
         "year": lambda m: m.get("year"),
         "month": lambda m: m.get("month"),
