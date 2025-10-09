@@ -38,7 +38,7 @@ class FilenameGenerator:
         "image": "{date}-{time}-{device_make}-{device_model}-ir{resolution}-s{size_kb}",
         "document": "{date}-{title}-p{page_count}-s{size_kb}",
         "audio": "{date}-{artist}-{title}-br{bitrate}",
-        "video": "{date_compact}-{time_compact}-{resolution_label}-{fps}p-{duration_short}-{device_model}",
+        "video": "{date_compact}-{time_compact}-{resolution_label}-{fps}p-{duration_short}-{device_make}-{device_model}",
         "unknown": "{date}-{checksum_short}-{size_kb}"
     }
 

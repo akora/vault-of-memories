@@ -1,13 +1,15 @@
 """
 Media info extraction service for video files.
 
-Uses pymediainfo to extract technical metadata from video files.
+Uses pymediainfo to extract technical metadata from video files,
+with ExifTool fallback for camera metadata (e.g., Sony cameras).
 """
 
 import logging
 from pathlib import Path
 from typing import Dict, Any, Optional
 from pymediainfo import MediaInfo
+from .exiftool_wrapper import ExifToolWrapper
 
 
 logger = logging.getLogger(__name__)
@@ -34,6 +36,8 @@ class MediaInfoExtractor:
                            If None, uses system timezone.
         """
         self.target_timezone = target_timezone
+        self.exiftool = ExifToolWrapper()
+        self.exiftool_available = self.exiftool.is_available()
 
     def extract_metadata(self, file_path: Path) -> Dict[str, Any]:
         """
@@ -98,6 +102,10 @@ class MediaInfoExtractor:
                     metadata.update(self._extract_audio_info(track))
             elif track.track_type == "Text":
                 metadata["subtitle_streams"] += 1
+
+        # Extract camera info using ExifTool (more comprehensive than MediaInfo)
+        # Try ExifTool first, fall back to MediaInfo values if ExifTool fails
+        self._extract_camera_info_from_exif(file_path, metadata)
 
         return metadata
 
@@ -375,3 +383,75 @@ class MediaInfoExtractor:
             return float(alt_str.strip())
         except ValueError:
             return None
+
+    def _extract_camera_info_from_exif(self, file_path: Path, metadata: Dict[str, Any]) -> None:
+        """
+        Extract camera/device info using ExifTool.
+
+        ExifTool provides more comprehensive metadata extraction than MediaInfo,
+        especially for cameras like Sony that embed device info in EXIF/QuickTime tags.
+        Falls back to existing MediaInfo values if ExifTool fails or isn't available.
+
+        Args:
+            file_path: Path to video file
+            metadata: Metadata dict to update with camera info
+        """
+        if not self.exiftool_available:
+            logger.debug("ExifTool not available, using MediaInfo camera data only")
+            return
+
+        # Save existing MediaInfo values as fallback
+        existing_make = metadata.get("camera_make")
+        existing_model = metadata.get("camera_model")
+        existing_device = metadata.get("recording_device")
+
+        try:
+            exif_data = self.exiftool.extract_metadata(file_path)
+
+            # exif_data is a dict with group-prefixed keys
+            # Sony cameras: XML:DeviceManufacturer, XML:DeviceModelName
+            # DJI drones: QuickTime:HandlerVendorID, QuickTime:Make/Model
+            # Other cameras: EXIF:Make, EXIF:Model
+
+            # Try various camera/device field names (in priority order)
+            device_make = (
+                exif_data.get("XML:DeviceManufacturer") or
+                exif_data.get("QuickTime:DeviceManufacturer") or
+                exif_data.get("XMP:DeviceManufacturer") or
+                exif_data.get("EXIF:Make") or
+                exif_data.get("Composite:Make") or
+                exif_data.get("QuickTime:Make") or
+                existing_make  # Fallback to MediaInfo value
+            )
+
+            device_model = (
+                exif_data.get("XML:DeviceModelName") or
+                exif_data.get("QuickTime:DeviceModelName") or
+                exif_data.get("XMP:DeviceModelName") or
+                exif_data.get("EXIF:Model") or
+                exif_data.get("Composite:Model") or
+                exif_data.get("QuickTime:Model") or
+                existing_model  # Fallback to MediaInfo value
+            )
+
+            # Update metadata if we found better values
+            if device_make and device_make != existing_make:
+                metadata["camera_make"] = device_make
+                logger.debug(f"Extracted camera make from ExifTool: {device_make}")
+
+            if device_model and device_model != existing_model:
+                metadata["camera_model"] = device_model
+                logger.debug(f"Extracted camera model from ExifTool: {device_model}")
+
+            # Update recording_device with combined make/model
+            if device_make and device_model:
+                metadata["recording_device"] = f"{device_make} {device_model}"
+            elif device_model:
+                metadata["recording_device"] = device_model
+            elif existing_device:
+                # Keep existing MediaInfo value if ExifTool didn't find better data
+                metadata["recording_device"] = existing_device
+
+        except Exception as e:
+            logger.debug(f"ExifTool extraction failed, using MediaInfo values: {e}")
+            # Metadata already has MediaInfo values, no need to restore
