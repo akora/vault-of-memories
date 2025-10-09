@@ -272,6 +272,10 @@ class PipelineOrchestrator:
             if not file_type or file_type == 'unknown':
                 # Try to infer from mime_type
                 mime_type = metadata_dict.get('mime_type', '') or metadata_dict.get('file_type', '')
+                # Handle MetadataField objects (from asdict conversion)
+                if isinstance(mime_type, dict) and 'value' in mime_type:
+                    mime_type = mime_type['value']
+                mime_type = str(mime_type) if mime_type else ''
                 if mime_type.startswith('image/'):
                     file_type = 'image'
                 elif mime_type.startswith('video/'):

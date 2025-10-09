@@ -71,7 +71,7 @@ class DocumentProcessorImpl:
             elif extension == 'pptx':
                 metadata = self.office_analyzer.analyze_pptx(file_path)
 
-            elif extension == 'txt':
+            elif extension in ('txt', 'md', 'markdown'):
                 metadata = self._process_text_file(file_path)
 
             else:
@@ -107,7 +107,7 @@ class DocumentProcessorImpl:
         return [
             "pdf",
             "docx", "xlsx", "pptx",
-            "txt",
+            "txt", "md", "markdown",
             "odt", "ods", "odp",  # OpenDocument formats
         ]
 
@@ -126,12 +126,19 @@ class DocumentProcessorImpl:
 
     def _process_text_file(self, file_path: Path) -> DocumentMetadata:
         """Process a plain text file."""
+        # Determine MIME type based on extension
+        extension = file_path.suffix.lstrip('.').lower()
+        if extension in ('md', 'markdown'):
+            mime_type = "text/markdown"
+        else:
+            mime_type = "text/plain"
+
         metadata = DocumentMetadata(
             file_path=file_path,
             file_name=file_path.name,
             file_size=file_path.stat().st_size,
-            mime_type="text/plain",
-            file_extension="txt"
+            mime_type=mime_type,
+            file_extension=extension
         )
 
         try:

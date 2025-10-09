@@ -48,8 +48,11 @@ class ConsolidatedMetadata:
     # File information (always required)
     file_path: Path
     file_size: int
-    file_type: str  # MIME type
+    file_type: str  # Generic type: "image", "document", "video", "audio", etc.
     checksum: str  # SHA-256
+
+    # MIME type (for classification)
+    mime_type: Optional[MetadataField] = None
 
     # Timestamps (timezone-aware when available)
     creation_date: Optional[MetadataField] = None

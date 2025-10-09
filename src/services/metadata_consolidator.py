@@ -158,7 +158,7 @@ class MetadataConsolidator:
             # Raw formats
             ".nef", ".cr2", ".cr3", ".arw", ".dng", ".orf", ".rw2", ".raf", ".pef"
         }
-        doc_exts = {".pdf", ".doc", ".docx", ".odt", ".txt", ".rtf"}
+        doc_exts = {".pdf", ".doc", ".docx", ".odt", ".txt", ".md", ".markdown", ".rtf"}
         audio_exts = {".mp3", ".flac", ".m4a", ".ogg", ".wma", ".wav"}
         video_exts = {".mp4", ".avi", ".mov", ".mkv", ".wmv", ".webm"}
 
@@ -238,6 +238,10 @@ class MetadataConsolidator:
         field_sources = {}
         # Use EMBEDDED for processor-extracted metadata (PDF properties, ID3 tags, etc.)
         source = MetadataSource.EMBEDDED
+
+        # Extract MIME type (common to all file types)
+        if hasattr(processor_metadata, 'mime_type') and processor_metadata.mime_type:
+            field_sources['mime_type'] = {source: processor_metadata.mime_type}
 
         # Extract common fields from all processor types
         # Handle nested structures in DocumentMetadata

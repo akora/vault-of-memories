@@ -41,6 +41,7 @@ class ClassificationEngine:
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ('documents', 'office'),
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ('documents', 'office'),
         'text/plain': ('documents', 'text'),
+        'text/markdown': ('documents', 'text'),
 
         # Videos
         'video/mp4': ('videos', None),
@@ -72,13 +73,21 @@ class ClassificationEngine:
         Returns:
             Classification with category, confidence, and reasoning
         """
-        # Get MIME type
+        # Get MIME type from metadata
         mime_type = metadata.get('mime_type')
-        if not mime_type:
-            mime_type, method, confidence = self.mime_detector.detect(file_path)
-        else:
+
+        # Handle MetadataField objects (from asdict conversion)
+        if isinstance(mime_type, dict) and 'value' in mime_type:
+            mime_type = mime_type['value']
+            method = 'metadata'
+            confidence = mime_type.get('confidence', 0.95) if isinstance(mime_type, dict) else 0.95
+        elif mime_type:
+            # Direct string value
             method = 'metadata'
             confidence = 0.95
+        else:
+            # No MIME type in metadata, detect it
+            mime_type, method, confidence = self.mime_detector.detect(file_path)
 
         # Classify based on MIME type
         if mime_type in self.MIME_TO_CATEGORY:
