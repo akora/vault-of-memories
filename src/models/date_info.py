@@ -27,6 +27,8 @@ class DateInfo:
 
         valid_sources = {
             "exif_datetime_original",
+            "embedded_creation_date",  # PDF/Office document creation dates
+            "capture_date",  # Video recording dates
             "file_creation_time",
             "file_modification_time",
             "filename_parsing",

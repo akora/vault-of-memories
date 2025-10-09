@@ -26,10 +26,12 @@ class DateExtractor:
 
         Fallback order:
         1. EXIF DateTimeOriginal (photos/videos)
-        2. File creation time
-        3. File modification time
-        4. Filename date parsing
-        5. Current time (last resort)
+        2. Embedded document metadata (PDF/Office creation date)
+        3. Embedded capture date (videos)
+        4. File creation time
+        5. File modification time
+        6. Filename date parsing
+        7. Current time (last resort)
 
         Args:
             file_path: Path to file
@@ -43,7 +45,17 @@ class DateExtractor:
         if date_info:
             return date_info
 
-        # Level 2: File creation time
+        # Level 2: Embedded document metadata (PDF, Office documents)
+        date_info = self._extract_embedded_creation_date(metadata)
+        if date_info:
+            return date_info
+
+        # Level 3: Embedded capture date (videos)
+        date_info = self._extract_capture_date(metadata)
+        if date_info:
+            return date_info
+
+        # Level 4: File creation time
         date_info = self._extract_creation_time(file_path)
         if date_info:
             return date_info
@@ -97,6 +109,93 @@ class DateExtractor:
 
         except (ValueError, AttributeError) as e:
             logger.debug(f"Failed to parse EXIF datetime '{datetime_str}': {e}")
+            return None
+
+    def _extract_embedded_creation_date(self, metadata: dict[str, Any]) -> DateInfo | None:
+        """Level 2: Extract embedded creation date from document/media metadata."""
+        # Check for consolidated metadata creation_date field
+        creation_date = metadata.get('creation_date')
+        if not creation_date:
+            return None
+
+        try:
+            # Handle MetadataField objects (from consolidated metadata)
+            if hasattr(creation_date, 'value'):
+                dt = creation_date.value
+                source = creation_date.source
+            # Handle dict format
+            elif isinstance(creation_date, dict) and 'value' in creation_date:
+                dt = creation_date['value']
+                source = creation_date.get('source', 'embedded')
+            else:
+                dt = creation_date
+                source = 'embedded'
+
+            # Convert to datetime if needed
+            if isinstance(dt, str):
+                dt = datetime.fromisoformat(dt.replace('Z', '+00:00'))
+            elif isinstance(dt, date) and not isinstance(dt, datetime):
+                dt = datetime.combine(dt, datetime.min.time()).replace(tzinfo=timezone.utc)
+
+            # Ensure timezone aware
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+
+            # Only use if source is embedded (not filesystem)
+            source_str = str(source).lower()
+            if 'filesystem' in source_str or 'file_' in source_str:
+                return None
+
+            logger.debug(f"Extracted embedded creation date: {dt}")
+            return DateInfo(
+                datetime_utc=dt.astimezone(timezone.utc),
+                source="embedded_creation_date",
+                timezone_info="from_metadata",
+                original_local_date=dt.date(),
+                confidence=0.9
+            )
+
+        except (ValueError, AttributeError, TypeError) as e:
+            logger.debug(f"Failed to parse embedded creation date: {e}")
+            return None
+
+    def _extract_capture_date(self, metadata: dict[str, Any]) -> DateInfo | None:
+        """Level 3: Extract capture/recording date from video metadata."""
+        # Check for capture_date or recording_date
+        capture_date = metadata.get('capture_date') or metadata.get('recording_date')
+        if not capture_date:
+            return None
+
+        try:
+            # Handle MetadataField objects
+            if hasattr(capture_date, 'value'):
+                dt = capture_date.value
+            elif isinstance(capture_date, dict) and 'value' in capture_date:
+                dt = capture_date['value']
+            else:
+                dt = capture_date
+
+            # Convert to datetime if needed
+            if isinstance(dt, str):
+                dt = datetime.fromisoformat(dt.replace('Z', '+00:00'))
+            elif isinstance(dt, date) and not isinstance(dt, datetime):
+                dt = datetime.combine(dt, datetime.min.time()).replace(tzinfo=timezone.utc)
+
+            # Ensure timezone aware
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+
+            logger.debug(f"Extracted capture date: {dt}")
+            return DateInfo(
+                datetime_utc=dt.astimezone(timezone.utc),
+                source="capture_date",
+                timezone_info="from_metadata",
+                original_local_date=dt.date(),
+                confidence=0.9
+            )
+
+        except (ValueError, AttributeError, TypeError) as e:
+            logger.debug(f"Failed to parse capture date: {e}")
             return None
 
     def _extract_creation_time(self, file_path: Path) -> DateInfo | None:
