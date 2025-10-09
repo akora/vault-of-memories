@@ -388,6 +388,25 @@ class MetadataConsolidator:
             if hasattr(processor_metadata, 'fps') and processor_metadata.fps:
                 field_sources['fps'] = {source: processor_metadata.fps}
 
+        # Universal fallback: If no creation_date was extracted from any source,
+        # add filesystem timestamps for all file types
+        if 'creation_date' not in field_sources:
+            if hasattr(processor_metadata, 'file_path'):
+                from datetime import datetime, timezone
+                import platform
+                file_path = Path(processor_metadata.file_path)
+                if file_path.exists():
+                    stat_info = file_path.stat()
+                    # Get creation time (platform-specific)
+                    if platform.system() == 'Darwin':  # macOS
+                        timestamp = stat_info.st_birthtime
+                    elif platform.system() == 'Windows':
+                        timestamp = stat_info.st_ctime
+                    else:  # Linux - use mtime as fallback
+                        timestamp = stat_info.st_mtime
+                    creation_dt = datetime.fromtimestamp(timestamp, tz=timezone.utc)
+                    field_sources['creation_date'] = {MetadataSource.FILESYSTEM: creation_dt}
+
         return field_sources
 
     def _consolidate_fields(
