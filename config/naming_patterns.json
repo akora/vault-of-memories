@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "patterns": {
     "image": {
-      "default": "{date}-{time}-{device_make}-{device_model}-ir{resolution}-s{size_kb}",
+      "default": "{date}-{time}-{device_make}-{device_model}-ir{resolution}-{size_kb}kb",
       "description": "Pattern for image files (photos, screenshots, graphics)",
       "components": [
         "date",
@@ -13,10 +13,10 @@
         "resolution",
         "size_kb"
       ],
-      "example": "20240315-143022-Canon-EOS-5D-Mark-IV-ir4000x3000-s2048.jpg"
+      "example": "20240315-143022-Canon-EOS-5D-Mark-IV-ir4000x3000-2048kb.jpg"
     },
     "document": {
-      "default": "{date}-{time}-{title}-p{page_count}-s{size_kb}",
+      "default": "{date}-{time}-{title}-p{page_count}-{size_kb}kb",
       "description": "Pattern for document files (PDF, Word, Excel, PowerPoint)",
       "components": [
         "date",
@@ -25,7 +25,7 @@
         "page_count",
         "size_kb"
       ],
-      "example": "20240315-143022-quarterly-report-p24-s512.pdf"
+      "example": "20240315-143022-quarterly-report-p24-512kb.pdf"
     },
     "audio": {
       "default": "{date}-{artist}-{title}-br{bitrate}",
@@ -39,7 +39,7 @@
       "example": "20240315-beethoven-symphony-no-5-br320.mp3"
     },
     "video": {
-      "default": "{date}-{time}-{resolution_label}-{category}-s{size_mb}",
+      "default": "{date}-{time}-{resolution_label}-{category}-{size_mb}mb",
       "description": "Pattern for video files (MP4, MOV, AVI, MKV)",
       "components": [
         "date",
@@ -48,17 +48,17 @@
         "category",
         "size_mb"
       ],
-      "example": "20240315-143022-1080p-family-s1024.mp4"
+      "example": "20240315-143022-1080p-family-1024mb.mp4"
     },
     "unknown": {
-      "default": "{date}-{checksum_short}-s{size_kb}",
+      "default": "{date}-{checksum_short}-{size_kb}kb",
       "description": "Fallback pattern for unknown or unrecognized file types",
       "components": [
         "date",
         "checksum_short",
         "size_kb"
       ],
-      "example": "20240315-a1b2c3d4-s256.bin"
+      "example": "20240315-a1b2c3d4-256kb.bin"
     }
   },
   "component_definitions": {
