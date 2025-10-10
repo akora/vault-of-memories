@@ -1,12 +1,22 @@
 # 🗄️ Vault of Memories
 
-An intelligent file processing system that transforms scattered digital files into an organized, searchable vault with metadata-rich filenames and standardized folder structures - designed to stand the test of time.
+Me:
+
+> *Hey, my dear AI assistant!\
+>\
+> I'm planning to build a digital vault. The purpose of this project is to collect and package all digital memories, photos, videos, digitised documents into a digital vault so that my family can inherit it later in life. Please suggest methods, technologies, equipment that should be used. Also suggest digital formats that stand the test of time.*
+
+AI:
+
+> *Building a digital vault for preserving digital memories, photos, videos, and digitized documents is a thoughtful and lasting gift. Here are some methods, technologies, equipment, and digital formats that can help you ensure the longevity and accessibility of your digital vault: ...*
+
+:)
+
+Not so fast! Let's pause for a moment.
 
 ## 🎯 Project Vision
 
 The goal is to build a `pre-processor` for digital vaults that ensures digital assets stand the test of time. Rather than focusing on specific DAM (Digital Asset Management) systems that come and go, we focus on the source files themselves.
-
-*Always focus on the source!*
 
 Following core Unix design principles like "[everything is a file](https://en.wikipedia.org/wiki/Everything_is_a_file)" and *"make each program do one thing well"*, longevity is strengthened by focusing on the most basic, widespread formats:
 
@@ -16,6 +26,10 @@ Following core Unix design principles like "[everything is a file](https://en.wi
 - Most popular audio formats (MP3, FLAC)
 - Most popular document formats (PDF, DOCX, ODT)
 - Most popular archive formats (ZIP, TAR, 7Z)
+
+## 📝 Project Summary
+
+**Vault of Memories** is a Python-based digital vault pre-processor that organizes, deduplicates, and enriches digital files using metadata-driven classification. It follows a 7-stage modular pipeline from file ingestion to atomic vault organization.
 
 ## 🚀 Basic Usage
 
@@ -30,8 +44,8 @@ python3 -m src.cli --vault-root ~/vault process ~/Downloads
 python3 -m src.cli --help
 ```
 
-Upon the first run an SQLite database will be created (as a hidden file).
-This database is local and stores key attributes of each processed file, to manage identifying duplicates and to serve as the source for any processing statistics.
+Upon the first run an SQLite database is created (as a hidden file).
+This database is local and stores key attributes of each processed file, to manage the identification of duplicates and to serve as the source for any processing statistics.
 
 For more details on usage patterns please check [USAGE.md](./USAGE.md)
 
